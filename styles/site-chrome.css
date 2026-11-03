@@ -552,3 +552,10 @@ body:has([role="dialog"]) .dua-inquiry-fab { display: none; }
   .dua-inquiry-fab,
   .dua-back-to-top { display: none; }
 }
+
+/* Sticky footer (public pages): short pages push the footer to the viewport bottom.
+   Only applies when the footer is a direct body child, so admin is untouched. */
+body:has(> .dua-footer) { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+body:has(> .dua-footer) > header, body:has(> .dua-footer) > main, body:has(> .dua-footer) > footer { width: 100%; }
+body:has(> .dua-footer) > main { flex: 1 0 auto; }
+body:has(> .dua-footer) > .dua-footer { flex-shrink: 0; margin-top: auto; }

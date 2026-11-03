@@ -1,6 +1,13 @@
 # DUA+ 技術移轉手冊（HANDOVER）
 
-> 狀態截至：2026-11-03，第 1 批（聯絡我們／洽詢名單／隱私權政策／關於我們併入刊登合作）完成後。
+> 狀態截至：2026-11-03，第 2 批（首頁資訊架構＋ /projects 改版）完成後。第 1 批為聯絡我們／洽詢名單／隱私權政策／關於我們併入刊登合作。
+>
+> **第 2 批變更摘要**
+> - 首頁由上而下：Hero → 最新消息列（編輯精選標題，有才顯示）→ 開始找房 Q&A（5 題：地區 → 預算 → 房型 → 類型 → 生活需求）→ 最新建案（最多 6）→ 熱門區塊（排除已在最新建案出現者，沒有剩下就隱藏）→ 精選與廣告（1 橫幅＋2 方形）。
+> - 元件：`components/home-discovery.tsx`（HomeFinder、HomeProjectRail）、`components/home-sections.tsx`（新）；舊的 `components/explore-showcase.tsx` 已刪除。建案卡片 `ProjectCard`（`components/site.tsx`）改為新樣式，首頁與 `/projects` 共用。
+> - 樣式：新增 `styles/home.css`（卡片、輪播、Q&A、首頁區塊、共用下拉）與 `styles/listing.css`（/projects）；`app/globals.css` 中舊的 discovery／explore／editorial 首頁與列表樣式（藍色系、PMingLiU 等）已移除。
+> - 資料：首頁設定 `banners[]` 新增**選填**欄位 `slot`（`auto`／`wide`／`square`）；舊資料沒有此欄位時視為 `auto`，不需 migration。邏輯在 `lib/discovery.ts` 的 `adSlots()`、`popularExcluding()`、`lifeOptions`。
+> - 種子：新增 `seed/30-home-settings.sql`。
 > 之後每一批改動都要回頭更新本檔。其他細節文件：`docs/01-專案架構.md`、`docs/02-功能與完成狀態.md`、`docs/03-部署與交接.md`、`docs/admin-auth.md`、`docs/google-sheets.md`、`docs/sheets-inquiries.md`。
 
 ---
@@ -38,7 +45,7 @@ D1 資料表：
 | `lib/` | 資料模型、驗證（zod）、搜尋邏輯（`discovery*.ts`）、Sheets 串接（`sheet-delivery.ts`、`google-sheet-script.ts`）、隱私權文字（`privacy.ts`）、帳號（`account-auth.ts`、`password.ts`） |
 | `db/`、`drizzle/` | Drizzle schema 與 D1 migration（`0000_…`、`0001_inquiries.sql`，meta 在 `drizzle/meta/`） |
 | `seed/` | 本機種子資料 SQL（第 5 章） |
-| `styles/` | 設計系統：tokens、base、components、site-chrome、home-hero、page-loading、admin、contact（由 `styles/dua.css` 匯入） |
+| `styles/` | 設計系統：tokens、base、components、site-chrome、home-hero、home（首頁 Q&A／區塊／建案卡片）、listing（/projects）、contact、page-loading、admin（由 `styles/dua.css` 匯入）。`app/globals.css` 只剩 shadcn 主題變數與建案詳細頁、後台的舊樣式 |
 | `public/` | 靜態素材；`public/assets/characters` 角色圖；`public/assets/demo/*.jpg` 建案示範照片（已提交） |
 | `worker/` | Worker 進入點 |
 | `scripts/` | `local-setup.mjs`（本機初始化）、`seed-local.mjs`（種子資料）、`run-tests.mjs`（測試） |
@@ -104,6 +111,7 @@ pnpm dev                         # http://localhost:5173 ，後台 /admin/login
 | `seed/00-projects.sql` | 5 個既有建案的完整資料（`huayi-yoyogi-5` 華邑代代木5-星峠為真實建案；`demo-taipei-qingtian`、`demo-newtaipei-yuesen`、`demo-taichung-hikari`、`demo-kaohsiung-hele` 為虛構示範建案）。也是匯出／還原用的備份 |
 | `seed/10-inquiries.sql` | 8 筆虛構洽詢（一般／合作混合；已寫入、待補送、多次失敗等狀態；電話 0900-000-001～008；consent_version `privacy-2026-11`） |
 | `seed/20-bookings.sql` | 4 筆虛構賞屋預約，分屬既有建案（sent／pending 混合） |
+| `seed/30-home-settings.sql` | 首頁設定（`settings` key=`home`）：預設預算級距＋「精選與廣告」示範——橫幅＝編輯精選（連到星峠）、方形 1＝廣告（連到 /partner）、方形 2 留空以顯示「廣告版位招募中」。**會覆蓋本機後台已存的首頁設定**；清除：`DELETE FROM settings WHERE key='home'` |
 
 ```sh
 pnpm setup:local          # 先確保資料表存在
@@ -115,7 +123,7 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 - **建案保護**：本機 `projects` 表已有 `00-projects.sql` 中任何一個建案時，預設會跳過該檔，避免蓋掉本機後台的修改；加 `--reset-projects` 才會覆蓋。
 - 範例資料 id 都以 `5eed0000-` 開頭，可用 `DELETE FROM inquiries WHERE id LIKE '5eed0000-%'`（bookings 同理）清除。
 - **注意**：若本機後台已設定 Google Sheets 串接，按「補送未完成名單」會把 pending 範例寫進真的試算表。測試補送前先清掉範例或改用測試用試算表。
-- 範例資料只給本機用，**不要**對正式 D1 執行 `10-`、`20-`。`00-projects.sql` 必要時可用來還原正式建案（`--remote --file seed/00-projects.sql`，會覆蓋正式資料，請先備份）。
+- 範例資料只給本機用，**不要**對正式 D1 執行 `10-`、`20-`、`30-`（`30-` 會蓋掉正式首頁設定）。`00-projects.sql` 必要時可用來還原正式建案（`--remote --file seed/00-projects.sql`，會覆蓋正式資料，請先備份）。
 - 建案照片 `/assets/demo/*.jpg`（hsr-a19、hsr-station、huayi-exterior、land-art、paperbark-trail、plan-a6）已放在 `public/assets/demo/` 並隨 repo 提交。
 - 之後每一批的新功能都要在 `seed/` 加上對應的 `NN-<功能>.sql`。
 
@@ -161,7 +169,10 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 - **洽詢名單**（第 1 批新增）：切換 全部／一般洽詢／合作洽詢（含筆數），顯示時間（台北）、類型、姓名、電話／Email 連結、公司、內容、來源頁、試算表狀態（已寫入／待補送＋嘗試次數），待補送可連到 `/admin/sheets` 補送。沒有 CSV 匯出。
 - **名單接收設定**：公司名單總表、各建案專用表網址；串接細節在 `/admin/sheets`。
 - **平台資訊**：公司名稱、電話、Email、地址、FB／IG，前台 Footer 與 `/contact` 共用。
-- **首頁與瀏覽統計**：首頁內容設定與瀏覽次數。
+- **首頁與瀏覽統計**：
+  - 互動找房的預算級距（首頁 Q&A 與 `/projects` 共用）。
+  - **精選與廣告版位**（第 2 批）：每筆有 標題、類型（編輯精選／廣告・贊助）、**首頁版位**（自動／橫幅 2:1／方形 1:1）、連結、顯示期間、圖片。首頁固定保留 1 個橫幅＋2 個方形，只顯示圖片（標題當替代文字），角落小貼紙標示「廣告」或「精選」；「自動」依排列順序先補橫幅再補方形，多出的不顯示；空位顯示「廣告版位招募中」連到 `/partner`。建議尺寸：橫幅 1200×600、方形 800×800。編輯精選的標題也會出現在首頁上方「最新消息」列。正式站 R2 未啟用前上傳停用，可在「圖片路徑」欄位直接填 `/assets/...` 站內靜態圖（第 2 批新增欄位；只接受 `/assets/` 或 `/api/media/` 開頭）。
+  - 「大家都在看」開關與近 30 天瀏覽統計：開啟且至少 3 案有瀏覽、合計 10 次以上才有熱門資料；首頁會再排除已在「最新建案」出現的建案，沒有剩下就不顯示熱門區塊（目前只有 5 個建案，全部都在最新建案內，所以熱門區塊通常不會出現）。
 
 ## 8. Google Sheets 同步
 
@@ -199,3 +210,4 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 - **隱私權政策需法務審閱**：`lib/privacy.ts` 目前逐字照原稿（含疑似錯字「蒐集著」「導至」），版本 `privacy-2026-11`；修改文字時一併更新版本號。
 - Sheets 沒有自動重送排程，pending 名單需人工到 `/admin/sheets` 補送。
 - 忘記密碼寄信（Resend）尚未實際設定與端到端驗證。
+- **廣告圖片**：R2 未啟用前，廣告／精選圖片只能用已提交到 `public/assets/` 的靜態檔（後台「圖片路徑」欄位填寫）；客戶提供的廣告圖需先放進 repo 再部署。

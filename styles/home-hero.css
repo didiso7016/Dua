@@ -4,7 +4,7 @@
  * outlines and offset colour shadows, big Huninn + Outfit type, the DUA+ characters.
  * Mobile first; breakpoints 640 / 1024 / 1440px. Only transform / opacity animate.
  * Character PNGs are capped at their natural width (dua.5 395, dua.3 300, dua.1 174).
- * Selectors are prefixed with .dua-hero where legacy home rules (.explore-home h1 …) compete.
+ * Selectors are prefixed with .dua-hero (the old .explore-home rules were removed in batch 2; see styles/home.css).
  */
 
 .dua-hero {

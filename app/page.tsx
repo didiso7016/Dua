@@ -1,16 +1,21 @@
 import {getProjects,getSettings,getHomeSettings} from '@/lib/storage';
 import {Header,Footer,Unavailable} from '@/components/site';
 import {HomeFinder} from '@/components/home-discovery';
-import {ExploreShowcase} from '@/components/explore-showcase';
 import {HomeHero} from '@/components/home-hero';
-import {activeBanners,latestProjects,publicProject} from '@/lib/discovery';
+import {HomeLatest,HomePopular,HomeAds,HomeNews} from '@/components/home-sections';
+import {activeBanners,latestProjects,publicProject,popularExcluding} from '@/lib/discovery';
 import {viewStats} from '@/lib/view-stats';
 export const dynamic='force-dynamic';
-export default async function Home(){try{const [projects,settings,home]=await Promise.all([getProjects(),getSettings(),getHomeSettings()]);const data=latestProjects(projects).map(publicProject),banners=activeBanners(home);const stats=home.popularEnabled?await viewStats(projects).catch(()=>null):null;const popular=stats&&stats.total>=10&&stats.projects.filter(p=>p.views>0).length>=3?stats.projects.filter(p=>p.views>0).slice(0,3).map(r=>data.find(p=>p.id===r.id)!).filter(Boolean):[];
- return <><Header compact/><main className="discovery-home explore-home editorial-home">
+// 首頁由上而下：Hero → 開始找房 Q&A → 最新建案（最多 6）→ 熱門區塊（排除已在最新出現者，沒有就隱藏）→ 精選與廣告。
+export default async function Home(){try{const [projects,settings,home]=await Promise.all([getProjects(),getSettings(),getHomeSettings()]);const data=latestProjects(projects).map(publicProject),banners=activeBanners(home),latest=data.slice(0,6);
+ // 熱門訊號：後台開啟「大家都在看」且近 30 天至少 3 案有瀏覽、合計 10 次以上（沿用原規則）。
+ const stats=home.popularEnabled?await viewStats(projects).catch(()=>null):null;const ranked=stats&&stats.total>=10&&stats.projects.filter(p=>p.views>0).length>=3?stats.projects.filter(p=>p.views>0).map(r=>data.find(p=>p.id===r.id)!).filter(Boolean):[];const popular=popularExcluding(ranked,latest);
+ return <><Header compact/><main className="dua-home">
  <HomeHero/>
- {banners.some(b=>b.kind==='editorial')&&<aside className="explore-news" aria-label="最新消息"><span>最新消息</span><div>{banners.filter(b=>b.kind==='editorial').map(b=><a key={b.id} href={b.url} {...(b.url.startsWith('https:')?{target:'_blank',rel:'noopener noreferrer'}:{})}>{b.title} ↗</a>)}</div></aside>}
- <div className="explore-layout"><aside className="editorial-motto" aria-label="品牌標語"><span>從生活找到家的方向</span><small>DUA+ / FIND YOUR PLACE</small></aside><div className="explore-main" id="home-finder"><HomeFinder projects={data} budgets={home.budgetRanges}/></div>
- <ExploreShowcase projects={data.slice(0,6)} popular={popular} banners={banners}/></div>
+ <HomeNews banners={banners}/>
+ <HomeFinder projects={data} budgets={home.budgetRanges}/>
+ <HomeLatest projects={latest}/>
+ <HomePopular projects={popular}/>
+ <HomeAds banners={banners}/>
  </main><Footer settings={settings}/></>
  }catch(e){console.error(e);return <main className="container"><Unavailable/></main>}}

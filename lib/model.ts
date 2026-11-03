@@ -1,6 +1,7 @@
 export type ProjectPrice={min:number|null;max:number|null;parking:'included'|'excluded'|'unknown';verifiedOn:string};
 export type BudgetRange={id:string;label:string;min:number;max:number|null};
-export type HomeSettings={popularEnabled:boolean;budgetRanges:BudgetRange[];banners:{id:string;title:string;description:string;image:string;url:string;kind:'editorial'|'ad';visible:boolean;startDate:string;endDate:string}[]};
+export type HomeSettings={popularEnabled:boolean;budgetRanges:BudgetRange[];banners:{id:string;title:string;description:string;image:string;url:string;kind:'editorial'|'ad';visible:boolean;startDate:string;endDate:string;/** 首頁「精選與廣告」版位；舊資料沒有此欄位時視為 auto（依序先填橫幅、再填方形）。 */slot?:BannerSlot}[]};
+export type BannerSlot='auto'|'wide'|'square';
 export type BasicFact={id:string;source:'builder'|'rooms'|'area'|'kind'|'sales'|'custom';label:string;value:string;visible:boolean;fullWidth:boolean};
 export type Photo={url:string;caption:string};
 export type ContentBlock={id:string;chapter:'basic'|'plan'|'surrounding'|'location';layout:'full-image'|'image-left'|'image-right'|'carousel'|'text'|'video';video?:string;visible:boolean;title:string;text:string;photos:Photo[]};

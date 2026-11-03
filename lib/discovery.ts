@@ -12,4 +12,14 @@ export function searchQuery(filters:SearchFilters){const q=new URLSearchParams()
 export function parseSearch(query:string,budgets:BudgetRange[]):SearchFilters{const q=new URLSearchParams(query);return {city:(q.get('city')||'').slice(0,30),district:(q.get('district')||'').slice(0,30),type:['大樓','透天'].includes(q.get('type')||'')?q.get('type')!:'',budget:budgets.some(b=>b.id===q.get('budget'))?q.get('budget')!:'',life:['交通通勤','日常採買','綠意休閒','學區生活'].includes(q.get('life')||'')?q.get('life')!:'',rooms:(q.get('rooms')||'').split(',').filter(r=>(roomCategories as readonly string[]).includes(r))}}
 export function taipeiDay(now=new Date()){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(now)}
 export function activeBanners(home:HomeSettings,now=new Date()){const day=taipeiDay(now);return home.banners.filter(b=>b.visible&&b.title.trim()&&b.image&&b.url&&(!b.startDate||b.startDate<=day)&&(!b.endDate||b.endDate>=day))}
+/** 生活需求選項（首頁 Q&A 第 5 題與 /projects 共用；順序即顯示順序）。 */
+export const lifeOptions=['交通通勤','日常採買','綠意休閒','學區生活'] as const;
+type Banner=HomeSettings['banners'][number];
+/**
+ * 首頁「精選與廣告」：1 個橫幅＋2 個方形版位。先放指定 slot 的橫幅，
+ * 未指定（舊資料或 auto）的依序補位：先橫幅、再方形；多出來的不顯示。空位回傳 null（前台顯示招募中）。
+ */
+export function adSlots(banners:Banner[]):{wide:Banner|null;squares:[Banner|null,Banner|null]}{let wide:Banner|null=null;const squares:Banner[]=[];const auto:Banner[]=[];for(const b of banners){if(b.slot==='wide'&&!wide)wide=b;else if(b.slot==='square'&&squares.length<2)squares.push(b);else if(!b.slot||b.slot==='auto')auto.push(b)}for(const b of auto){if(!wide)wide=b;else if(squares.length<2)squares.push(b)}return {wide,squares:[squares[0]??null,squares[1]??null]}}
+/** 熱門區塊：排除已在「最新建案」出現的建案；沒有剩下就回傳空陣列（前台隱藏）。 */
+export function popularExcluding<T extends {id:string}>(popular:T[],shown:{id:string}[],limit=3){const ids=new Set(shown.map(p=>p.id));return popular.filter(p=>!ids.has(p.id)).slice(0,limit)}
 export const defaultHome:HomeSettings={popularEnabled:false,banners:[],budgetRanges:[{id:'under-1000',label:'1,000 萬以下',min:0,max:1000},{id:'1000-1500',label:'1,000–1,500 萬',min:1000,max:1500},{id:'1500-2000',label:'1,500–2,000 萬',min:1500,max:2000},{id:'2000-3000',label:'2,000–3,000 萬',min:2000,max:3000},{id:'over-3000',label:'3,000 萬以上',min:3000,max:null}]};

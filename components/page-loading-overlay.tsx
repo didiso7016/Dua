@@ -2,14 +2,14 @@
 // TEMPORARY PREVIEW (2026-11): forces the loading overlay for a fixed time so the owner can review the animation.
 // To turn off: set LOADING_PREVIEW_ENABLED = false (or delete this component and its usage).
 export const LOADING_PREVIEW_ENABLED = true;
-export const LOADING_MIN_MS = 1000;
+export const LOADING_MIN_MS = 2600; // opening scene length, see styles/page-loading.css
 
 import {useEffect,useState} from 'react';
 import {usePathname} from 'next/navigation';
-import {DuaLoading} from './dua-loading';
+import {LoadingScene} from './loading-scene';
 
 /** Must match the fade duration in styles/page-loading.css. */
-const LOADING_FADE_MS = 300;
+const LOADING_FADE_MS = 50;
 
 /** Never on the back office (admin, admin login/reset/etc., admin previews). */
 function isAdminPath(pathname:string){
@@ -52,7 +52,7 @@ export function PageLoadingOverlay(){
  return <>
   <noscript dangerouslySetInnerHTML={{__html:'<style>.dua-page-loading{display:none!important}</style>'}}/>
   <div key={run.id} className={'dua-page-loading'+(leaving?' dua-page-loading--leaving':'')} aria-hidden={leaving?true:undefined}>
-   <DuaLoading size="lg"/>
+   <LoadingScene/>
   </div>
  </>;
 }

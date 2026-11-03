@@ -1,38 +1,90 @@
 /*
- * TEMPORARY PREVIEW (2026-11): full-screen DuaLoading overlay — components/page-loading-overlay.tsx.
- * Delete this file (and its @import in styles/dua.css) together with the component.
+ * TEMPORARY PREVIEW (2026-11): full-screen opening scene — components/page-loading-overlay.tsx
+ * + components/loading-scene.tsx. Delete this file (and its @import in styles/dua.css)
+ * together with the components.
  *
- * The fade-out is driven by CSS alone (1s hold + 300ms fade, `forwards`), so the overlay
- * never stays stuck even if JS fails; JS removes the node afterwards and replays it on
- * client-side navigation by remounting it. Keep the timing in sync with LOADING_MIN_MS
- * and LOADING_FADE_MS in the component.
+ * Timeline (keep LOADING_MIN_MS in sync, 2600ms):
+ *   0–1400  girl walks in; homes rise one by one as she passes
+ *   1400–1900  she stops at the DUA+ home, takes out the house key and turns it
+ *   1900–2150  zoom into the double doors (scene → full-screen doors)
+ *   2150–2600  the doors swing open to both sides, revealing the page
+ * The overlay hides itself by CSS at 2600ms even if JS never runs; JS removes the node
+ * afterwards and replays it on client-side navigation by remounting it.
  */
 .dua-page-loading {
   position: fixed;
   inset: 0;
   /* Above everything: header (40), back-to-top (35), shadcn dialogs/sheets (50). */
   z-index: 1000;
-  display: grid;
-  place-items: center;
-  background: var(--dua-bg);
+  display: block;
   color: var(--dua-ink);
-  animation: dua-page-loading-out 300ms ease 1s forwards;
+  perspective: 1400px;
+  animation: dua-page-loading-out 1ms linear 2.6s forwards;
 }
+.dua-page-loading--leaving { pointer-events: none; }
+@keyframes dua-page-loading-out { to { opacity: 0; visibility: hidden; pointer-events: none; } }
 
-/* JS-side hidden state (aria-hidden is set at the same time). Never blocks clicks while fading. */
-.dua-page-loading--leaving {
-  pointer-events: none;
+.dls { position: absolute; inset: 0; display: block; }
+
+/* Scene layer (cream backdrop + stage), zooms into the door then fades. */
+.dls-scene {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  background: #F8F6F0;
+  animation: dls-scene-out 250ms ease-in 1.9s forwards;
 }
-
-@keyframes dua-page-loading-out {
-  from { opacity: 1; visibility: visible; }
-  to { opacity: 0; visibility: hidden; pointer-events: none; }
+@keyframes dls-scene-out { to { opacity: 0; visibility: hidden; } }
+.dls-stage {
+  position: relative; display: block;
+  width: min(760px, 94vw); aspect-ratio: 760 / 300;
+  transform-origin: 83.5% 84%;
+  animation: dls-zoom 260ms cubic-bezier(.5,0,.9,.4) 1.9s forwards;
 }
+@keyframes dls-zoom { to { transform: scale(9); } }
+.dls-ground { position: absolute; left: -4%; right: -4%; bottom: 0; height: 4px; background: #141814; border-radius: 2px; }
+.dls-ground::after { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 14px; background: #53B576; border-bottom: 3px solid #141814; }
 
-/* Reduced motion: still held for the full duration (DuaLoading shows its static art), but no fade. */
+/* Homes rise from the ground one by one. */
+.dls-bld { position: absolute; bottom: 4px; display: block; transform-origin: 50% 100%; transform: scaleY(0); animation: dls-rise 360ms cubic-bezier(.3,1.5,.5,1) forwards; }
+.dls-bld svg { display: block; width: 100%; height: auto; overflow: visible; }
+.dls-bld--1 { left: 2%; width: 12%; animation-delay: .15s; }
+.dls-bld--2 { left: 16%; width: 13%; animation-delay: .4s; }
+.dls-bld--3 { left: 31%; width: 11%; animation-delay: .65s; }
+.dls-bld--4 { left: 44%; width: 13%; animation-delay: .9s; }
+.dls-home { left: 74%; width: 19%; animation-delay: 1.1s; }
+@keyframes dls-rise { 0% { transform: scaleY(0); } 70% { transform: scaleY(1.06); } 100% { transform: scaleY(1); } }
+.dls-home__logo { position: absolute; left: 50%; top: 13%; width: 34%; height: auto; transform: translateX(-50%); }
+
+/* The walker: enters from the left, stops beside the DUA+ home. */
+.dls-walker { position: absolute; bottom: 4px; left: -14%; width: 9%; display: block; animation: dls-walk 1.4s cubic-bezier(.35,.1,.45,1) forwards; }
+.dls-walker__art { display: block; width: 100%; height: auto; transform-origin: 50% 100%; animation: dls-step .28s ease-in-out 5 alternate; }
+@keyframes dls-walk { to { left: 64%; } }
+@keyframes dls-step { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-7%) rotate(4deg); } }
+
+/* House-shaped key: pops out at the door, then turns. */
+.dls-key { position: absolute; right: -55%; top: 38%; width: 50%; display: block; opacity: 0; transform-origin: 50% 85%; animation: dls-key-in 200ms ease-out 1.42s forwards, dls-key-turn 340ms cubic-bezier(.4,1.6,.6,1) 1.58s forwards; }
+.dls-key svg { display: block; width: 100%; height: auto; }
+@keyframes dls-key-in { from { opacity: 0; transform: translateY(20%) scale(.5); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes dls-key-turn { from { opacity: 1; transform: rotate(0); } to { opacity: 1; transform: rotate(90deg); } }
+
+/* Full-screen double doors (what the zoom lands on), swinging open. */
+.dls-doors { position: absolute; inset: 0; display: block; pointer-events: none; opacity: 0; animation: dls-doors-in 120ms linear 2.04s forwards; }
+@keyframes dls-doors-in { to { opacity: 1; } }
+.dls-door { position: absolute; top: 0; bottom: 0; width: 50%; display: flex; flex-direction: column; gap: 3vh; padding: 6vh 5vw; background: #D92A40; border: 6px solid #141814; backface-visibility: hidden; }
+.dls-door--l { left: 0; transform-origin: 0 50%; animation: dls-door-l 450ms cubic-bezier(.55,0,.35,1) 2.15s forwards; }
+.dls-door--r { right: 0; transform-origin: 100% 50%; animation: dls-door-r 450ms cubic-bezier(.55,0,.35,1) 2.15s forwards; }
+.dls-door__panel { flex: 1; border: 5px solid #141814; border-radius: 6px; background: rgba(255,255,255,.08); }
+.dls-door__knob { position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: #ECE388; border: 4px solid #141814; }
+.dls-door--l .dls-door__knob { right: 18px; }
+.dls-door--r .dls-door__knob { left: 18px; }
+@keyframes dls-door-l { to { transform: rotateY(-100deg); opacity: 0; } }
+@keyframes dls-door-r { to { transform: rotateY(100deg); opacity: 0; } }
+
+/* Reduced motion: no walking, rising, zoom or swinging — a still scene, then it simply disappears. */
 @media (prefers-reduced-motion: reduce) {
-  .dua-page-loading {
-    animation-duration: 1ms;
-    animation-timing-function: step-end;
-  }
+  .dua-page-loading { animation-delay: 1.2s; }
+  .dls-scene, .dls-stage, .dls-bld, .dls-walker, .dls-walker__art, .dls-key, .dls-doors, .dls-door { animation: none !important; }
+  .dls-bld { transform: none; }
+  .dls-walker { left: 64%; }
+  .dls-key { opacity: 1; }
+  .dls-doors { display: none; }
 }

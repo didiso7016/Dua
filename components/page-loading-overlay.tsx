@@ -2,7 +2,7 @@
 // TEMPORARY PREVIEW (2026-11): forces the loading overlay for a fixed time so the owner can review the animation.
 // To turn off: set LOADING_PREVIEW_ENABLED = false (or delete this component and its usage).
 export const LOADING_PREVIEW_ENABLED = true;
-export const LOADING_MIN_MS = 2600; // opening scene length, see styles/page-loading.css
+export const LOADING_MIN_MS = 4500; // opening scene length, see styles/page-loading.css
 
 import {useEffect,useState} from 'react';
 import {usePathname} from 'next/navigation';

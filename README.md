@@ -9,6 +9,7 @@
 ```sh
 pnpm install --frozen-lockfile   # 安裝套件
 pnpm setup:local                 # 建立 .dev.vars 與本機 D1 資料表（不會覆蓋既有資料）
+pnpm seed:local                  # 載入 seed/ 範例資料（洽詢、預約；本機已有建案時不覆蓋）
 pnpm dev                         # http://localhost:5173 ，後台 /admin/login
 ```
 
@@ -45,4 +46,4 @@ pnpm dev                         # http://localhost:5173 ，後台 /admin/login
 
 ## 部署
 
-正式站將部署到公司自己的 Cloudflare 帳號與購買的網域，步驟見 docs/03-部署與交接.md。本機修改不會自動發布。
+正式站將部署到公司自己的 Cloudflare 帳號與購買的網域，步驟見 docs/03-部署與交接.md。完整技術移轉手冊（含目前部署流程、R2 未啟用的處理方式、種子資料）見 docs/HANDOVER.md。本機修改不會自動發布。

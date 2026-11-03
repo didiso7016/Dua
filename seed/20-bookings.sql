@@ -1,0 +1,10 @@
+-- 賞屋預約範例（bookings 表；欄位 data 為 JSON，格式與 app/api/bookings/route.ts 寫入的一致）。全部為虛構資料。
+-- INSERT OR REPLACE ＋ 固定 id（5eed0000-…02xx），可重複執行。對應既有 5 個建案的 id（見 seed/00-projects.sql）。
+-- 真實建案 huayi-yoyogi-5 的範例一律標為 sent，避免本機按「補送」時把虛構預約寫進星峠的真實試算表。
+-- 要清除：DELETE FROM bookings WHERE id LIKE '5eed0000-%';
+
+INSERT OR REPLACE INTO bookings (id,project_id,data,created_at) VALUES
+('5eed0000-0000-4000-8000-000000000201','huayi-yoyogi-5','{"id":"5eed0000-0000-4000-8000-000000000201","projectId":"huayi-yoyogi-5","name":"王小明（範例）","phone":"0900-000-011","date":"2026-11-08","time":"下午 2 點","notes":"想看 A6 格局（範例資料）","consent":true,"website":"","projectName":"華邑代代木5-星峠","consentVersion":"privacy-2026-11","sheetDelivery":"sent","sheetStatus":"sent","sheetLease":0,"sheetAttemptAt":"2026-11-01T03:00:02.000Z"}','2026-11-01T03:00:00.000Z'),
+('5eed0000-0000-4000-8000-000000000202','demo-taipei-qingtian','{"id":"5eed0000-0000-4000-8000-000000000202","projectId":"demo-taipei-qingtian","name":"林雅婷（範例）","phone":"0900-000-012","date":"2026-11-09","time":"上午 10 點","notes":"","consent":true,"website":"","projectName":"青田晴光（示範）","consentVersion":"privacy-2026-11","sheetDelivery":"pending","sheetStatus":"pending"}','2026-11-01T09:30:00.000Z'),
+('5eed0000-0000-4000-8000-000000000203','demo-newtaipei-yuesen','{"id":"5eed0000-0000-4000-8000-000000000203","projectId":"demo-newtaipei-yuesen","name":"陳志豪（範例）","phone":"0900-000-013","date":"2026-11-10","time":"晚上 7 點後","notes":"下班後才有空","consent":true,"website":"","projectName":"板橋悅森居（示範）","consentVersion":"privacy-2026-11","sheetDelivery":"sent","sheetStatus":"sent","sheetLease":0,"sheetAttemptAt":"2026-11-02T12:00:03.000Z"}','2026-11-02T12:00:00.000Z'),
+('5eed0000-0000-4000-8000-000000000204','demo-kaohsiung-hele','{"id":"5eed0000-0000-4000-8000-000000000204","projectId":"demo-kaohsiung-hele","name":"黃美玲（範例）","phone":"0900-000-014","date":"","time":"","notes":"想帶長輩一起看透天","consent":true,"website":"","projectName":"鳳山和樂透天（示範）","consentVersion":"privacy-2026-11","sheetDelivery":"pending","sheetStatus":"pending","sheetLease":0,"sheetAttemptAt":"2026-11-03T02:10:05.000Z"}','2026-11-03T02:10:00.000Z');

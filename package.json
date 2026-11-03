@@ -10,6 +10,7 @@
     "build": "vinext build",
     "start": "wrangler dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1",
     "setup:local": "node scripts/local-setup.mjs",
+    "seed:local": "node scripts/seed-local.mjs",
     "typecheck": "tsc --noEmit",
     "test": "node scripts/run-tests.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",

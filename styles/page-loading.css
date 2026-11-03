@@ -18,7 +18,6 @@
   z-index: 1000;
   display: block;
   color: var(--dua-ink);
-  perspective: 1400px;
   animation: dua-page-loading-out 1ms linear 4.5s forwards;
 }
 .dua-page-loading--leaving { pointer-events: none; }
@@ -37,9 +36,12 @@
   position: relative; display: block;
   width: min(760px, 94vw); aspect-ratio: 760 / 300;
   transform-origin: 83.5% 84%;
+  /* One wrapper, own layer: the zoom scales the cached raster instead of repainting the SVGs. */
+  will-change: transform;
+  backface-visibility: hidden;
   animation: dls-zoom 600ms cubic-bezier(.55,0,.85,.45) 2.8s forwards;
 }
-@keyframes dls-zoom { to { transform: scale(9); } }
+@keyframes dls-zoom { from { transform: translateZ(0) scale(1); } to { transform: translateZ(0) scale(4); } }
 .dls-ground { position: absolute; left: -4%; right: -4%; bottom: 0; height: 4px; background: #141814; border-radius: 2px; }
 .dls-ground::after { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 14px; background: #53B576; border-bottom: 3px solid #141814; }
 
@@ -55,9 +57,10 @@
 .dls-home__logo { position: absolute; left: 50%; top: 13%; width: 34%; height: auto; transform: translateX(-50%); }
 
 /* The walker: enters from the left, stops beside the DUA+ home. */
-.dls-walker { position: absolute; bottom: 4px; left: -14%; width: 9%; display: block; animation: dls-walk 2s cubic-bezier(.35,.1,.45,1) forwards; }
+/* Walks with transform only: final spot is left:64%; start is 78% of the stage further left (78/9 = 8.67 own widths). */
+.dls-walker { position: absolute; bottom: 4px; left: 64%; width: 9%; display: block; transform: translateX(-867%); animation: dls-walk 2s cubic-bezier(.35,.1,.45,1) forwards; }
 .dls-walker__art { display: block; width: 100%; height: auto; transform-origin: 50% 100%; animation: dls-step .28s ease-in-out 7 alternate; }
-@keyframes dls-walk { to { left: 64%; } }
+@keyframes dls-walk { from { transform: translateX(-867%); } to { transform: translateX(0); } }
 @keyframes dls-step { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-7%) rotate(4deg); } }
 
 /* House-shaped key: pops out at the door, then turns. */
@@ -68,24 +71,31 @@
 @keyframes dls-key-turn { from { opacity: 1; transform: rotate(0); } to { opacity: 1; transform: rotate(90deg); } }
 
 /* Full-screen double doors (what the zoom lands on), swinging open. */
-.dls-doors { position: absolute; inset: 0; display: block; pointer-events: none; opacity: 0; animation: dls-doors-in 150ms linear 3.15s forwards; }
+.dls-doors { position: absolute; inset: 0; display: block; pointer-events: none; opacity: 0; perspective: 1400px; will-change: opacity; animation: dls-doors-in 150ms linear 3.15s forwards; }
 @keyframes dls-doors-in { to { opacity: 1; } }
-.dls-door { position: absolute; top: 0; bottom: 0; width: 50%; display: flex; flex-direction: column; gap: 3vh; padding: 6vh 5vw; background: #D92A40; border: 6px solid #141814; backface-visibility: hidden; }
+.dls-door { position: absolute; top: 0; bottom: 0; width: 50%; display: flex; flex-direction: column; gap: 3vh; padding: 6vh 5vw; background: #D92A40; border: 6px solid #141814; backface-visibility: hidden; will-change: transform, opacity; transform: translateZ(0); }
 .dls-door--l { left: 0; transform-origin: 0 50%; animation: dls-door-l 950ms cubic-bezier(.45,0,.3,1) 3.5s forwards; }
 .dls-door--r { right: 0; transform-origin: 100% 50%; animation: dls-door-r 950ms cubic-bezier(.45,0,.3,1) 3.5s forwards; }
 .dls-door__panel { flex: 1; border: 5px solid #141814; border-radius: 6px; background: rgba(255,255,255,.08); }
 .dls-door__knob { position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: #ECE388; border: 4px solid #141814; }
 .dls-door--l .dls-door__knob { right: 18px; }
 .dls-door--r .dls-door__knob { left: 18px; }
-@keyframes dls-door-l { 0% { transform: rotateY(0); opacity: 1; } 75% { opacity: 1; } 100% { transform: rotateY(-100deg); opacity: 0; } }
-@keyframes dls-door-r { 0% { transform: rotateY(0); opacity: 1; } 75% { opacity: 1; } 100% { transform: rotateY(100deg); opacity: 0; } }
+@keyframes dls-door-l { 0% { transform: translateZ(0) rotateY(0); opacity: 1; } 75% { opacity: 1; } 100% { transform: translateZ(0) rotateY(-100deg); opacity: 0; } }
+@keyframes dls-door-r { 0% { transform: translateZ(0) rotateY(0); opacity: 1; } 75% { opacity: 1; } 100% { transform: translateZ(0) rotateY(100deg); opacity: 0; } }
 
 /* Reduced motion: no walking, rising, zoom or swinging — a still scene, then it simply disappears. */
 @media (prefers-reduced-motion: reduce) {
   .dua-page-loading { animation-delay: 1.2s; }
   .dls-scene, .dls-stage, .dls-bld, .dls-walker, .dls-walker__art, .dls-key, .dls-doors, .dls-door { animation: none !important; }
   .dls-bld { transform: none; }
-  .dls-walker { left: 64%; }
+  .dls-walker { transform: none; }
   .dls-key { opacity: 1; }
   .dls-doors { display: none; }
+}
+
+/* While the opening plays, pause the page's own looping animations (hero float, ticker)
+   so the door phase has the main/compositor threads to itself; they resume when it leaves. */
+body:has(.dua-page-loading:not(.dua-page-loading--leaving)) .dua-hero__char img,
+body:has(.dua-page-loading:not(.dua-page-loading--leaving)) .dua-hero__marquee-track {
+  animation-play-state: paused;
 }

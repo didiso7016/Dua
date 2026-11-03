@@ -558,3 +558,24 @@ body:has(> .dua-footer) { display: flex; flex-direction: column; min-height: 100
 body:has(> .dua-footer) > header, body:has(> .dua-footer) > main, body:has(> .dua-footer) > footer { width: 100%; }
 body:has(> .dua-footer) > main { flex: 1 0 auto; }
 body:has(> .dua-footer) > .dua-footer { flex-shrink: 0; margin-top: auto; }
+/* ===================================================== Mobile footer (<640px), compact
+   Row 1: house + company (left) / FB IG (right); row 2: address; row 3: phone + email (wraps).
+   company/contact wrappers become transparent so their children join one wrapping flex row.
+   Bottom padding clears the fixed back-to-top (and the floating 洽詢 button when present). */
+@media (max-width: 639.98px) {
+  .dua-footer { padding: 12px var(--dua-gutter) calc(76px + env(safe-area-inset-bottom)); }
+  body:has(.dua-inquiry-fab) .dua-footer:not(.has-booking ~ .dua-footer) { padding-bottom: calc(136px + env(safe-area-inset-bottom)); }
+  .dua-footer__main { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+  .dua-footer__main > * { order: 10; }
+  .dua-footer__company, .dua-footer__contact { display: contents; }
+  .dua-footer__brand { order: 1; flex: 1 1 auto; gap: 10px; }
+  .dua-footer__house { width: 40px; }
+  .dua-footer__brand p { font-size: 15px; }
+  .dua-footer__socials { order: 2; margin-left: auto; padding-top: 0; gap: 8px; flex-wrap: nowrap; }
+  .dua-footer__socials > a { width: 36px; height: 36px; }
+  .dua-footer__socials svg { width: 17px; height: 17px; }
+  .dua-footer__contact > p { order: 3; flex: 1 0 100%; padding: 2px 0; font-size: 13px; }
+  .dua-footer__contact > a { order: 4; min-height: 36px; font-size: 13px; gap: 6px; }
+  .dua-footer__contact > a[href^="mailto:"] { order: 5; }
+  .dua-footer__contact svg { width: 16px; height: 16px; }
+}

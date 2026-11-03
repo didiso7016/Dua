@@ -558,24 +558,57 @@ body:has(> .dua-footer) { display: flex; flex-direction: column; min-height: 100
 body:has(> .dua-footer) > header, body:has(> .dua-footer) > main, body:has(> .dua-footer) > footer { width: 100%; }
 body:has(> .dua-footer) > main { flex: 1 0 auto; }
 body:has(> .dua-footer) > .dua-footer { flex-shrink: 0; margin-top: auto; }
-/* ===================================================== Mobile footer (<640px), compact
-   Row 1: house + company (left) / FB IG (right); row 2: address; row 3: phone + email (wraps).
-   company/contact wrappers become transparent so their children join one wrapping flex row.
-   Bottom padding clears the fixed back-to-top (and the floating 洽詢 button when present). */
+/* ===================================================== Footer sections (all widths)
+   .dua-footer__company holds two labelled groups: Contact us (address/phone/email) and Follow us (FB/IG).
+   Desktop/tablet: groups side by side (contact left, follow right). Mobile (<640px): stacked —
+   Follow us, Contact us (phone / address / email, one per row), divider, house + company, copyright. */
+.dua-footer__label {
+  margin: 0 0 6px;
+  color: var(--dua-ink-2);
+  font-family: var(--dua-font-en);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.dua-footer__company { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px 40px; }
+.dua-footer__group { min-width: 0; }
+.dua-footer__group--contact { flex: 1 1 auto; }
+.dua-footer__group--follow .dua-footer__socials { padding-top: 0; }
+.dua-footer__copy { font-size: 12px; }
+.dua-footer__copy, .dua-footer__bottom:has(> .dua-footer__copy:only-child) { color: var(--dua-ink-2); }
+.dua-footer__bottom:has(> .dua-footer__copy:only-child) { justify-content: center; }
+
 @media (max-width: 639.98px) {
-  .dua-footer { padding: 12px var(--dua-gutter) calc(76px + env(safe-area-inset-bottom)); }
-  body:has(.dua-inquiry-fab) .dua-footer:not(.has-booking ~ .dua-footer) { padding-bottom: calc(136px + env(safe-area-inset-bottom)); }
-  .dua-footer__main { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
-  .dua-footer__main > * { order: 10; }
-  .dua-footer__company, .dua-footer__contact { display: contents; }
-  .dua-footer__brand { order: 1; flex: 1 1 auto; gap: 10px; }
-  .dua-footer__house { width: 40px; }
-  .dua-footer__brand p { font-size: 15px; }
-  .dua-footer__socials { order: 2; margin-left: auto; padding-top: 0; gap: 8px; flex-wrap: nowrap; }
-  .dua-footer__socials > a { width: 36px; height: 36px; }
-  .dua-footer__socials svg { width: 17px; height: 17px; }
-  .dua-footer__contact > p { order: 3; flex: 1 0 100%; padding: 2px 0; font-size: 13px; }
-  .dua-footer__contact > a { order: 4; min-height: 36px; font-size: 13px; gap: 6px; }
-  .dua-footer__contact > a[href^="mailto:"] { order: 5; }
-  .dua-footer__contact svg { width: 16px; height: 16px; }
+  .dua-footer { padding: 28px var(--dua-gutter) calc(84px + env(safe-area-inset-bottom)); }
+  .dua-footer__main { flex-direction: column; align-items: stretch; gap: 20px; }
+  .dua-footer__company { order: 1; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 22px; }
+  .dua-footer__group { display: flex; flex-direction: column; gap: 10px; }
+  .dua-footer__group--follow { order: 1; }
+  .dua-footer__group--contact { order: 2; }
+  .dua-footer__label { margin: 0; }
+  .dua-footer__socials { gap: 10px; flex-wrap: nowrap; }
+  .dua-footer__socials > a { width: 38px; height: 38px; }
+  .dua-footer__socials svg { width: 18px; height: 18px; }
+  .dua-footer__contact { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+  .dua-footer__contact > a, .dua-footer__contact > p { flex: 0 0 auto; margin: 0; min-height: 0; font-size: 14px; line-height: 1.6; gap: 8px; }
+  .dua-footer__contact > a { order: 1; white-space: nowrap; }
+  .dua-footer__contact > p { order: 2; }
+  .dua-footer__contact > a[href^="mailto:"] { order: 3; }
+  .dua-footer__contact > a span { overflow-wrap: normal; white-space: nowrap; }
+  .dua-footer__contact svg { width: 17px; height: 17px; }
+  .dua-footer__brand { order: 2; gap: 10px; padding-top: 16px; border-top: 1.5px solid color-mix(in srgb, var(--dua-ink) 18%, transparent); }
+  .dua-footer__house { width: 42px; }
+  .dua-footer__brand p { font-size: 15px; line-height: 1.6; }
+  .dua-footer__bottom { flex-direction: column; justify-content: center; gap: 4px; margin-top: 14px; text-align: center; }
+}
+/* Desktop/tablet: contact group hugs its items (label aligns with them); keep the fixed back-to-top clear of the icons. */
+@media (min-width: 640px) {
+  .dua-footer__company { justify-content: flex-end; }
+  .dua-footer__group--contact { flex: 0 1 auto; }
+  .dua-footer__main, .dua-footer__bottom { padding-right: 64px; }
+}
+@media (max-width: 639.98px) {
+  .dua-footer__bottom { border-top: 0; padding-top: 0; }
 }

@@ -147,6 +147,7 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 - **建案保護**：本機 `projects` 表已有 `00-projects.sql` 中任何一個建案時，預設會跳過該檔，避免蓋掉本機後台的修改；加 `--reset-projects` 才會覆蓋。
 - 範例資料 id 都以 `5eed0000-` 開頭，可用 `DELETE FROM inquiries WHERE id LIKE '5eed0000-%'`（bookings 同理）清除。
 - **注意**：若本機後台已設定 Google Sheets 串接，按「補送未完成名單」會把 pending 範例寫進真的試算表。測試補送前先清掉範例或改用測試用試算表。
+- 正式 D1 已載入：`40-project-templates.sql`（第 3 批）、`60-batch5.sql`（第 5 批，2026-11-04；只改光之丘、悅森居兩個示範建案，執行前已備份這兩筆）。這兩檔只用 `json_set`，可安全對正式 D1 重跑：`wrangler d1 execute dua-plus-db --remote --file seed/60-batch5.sql`（在 `C:DUA-deploy` 執行）。
 - 範例資料只給本機用，**不要**對正式 D1 執行 `10-`、`20-`、`30-`（`30-` 會蓋掉正式首頁設定）。`00-projects.sql` 必要時可用來還原正式建案（`--remote --file seed/00-projects.sql`，會覆蓋正式資料，請先備份）。
 - 建案照片 `/assets/demo/*.jpg`（hsr-a19、hsr-station、huayi-exterior、land-art、paperbark-trail、plan-a6）已放在 `public/assets/demo/` 並隨 repo 提交。
 - 之後每一批的新功能都要在 `seed/` 加上對應的 `NN-<功能>.sql`。
@@ -163,12 +164,12 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 3. **移除 R2 設定（目前必要）**：Cloudflare 帳號**尚未啟用 R2**。打開 `dist/server/wrangler.json`，刪除整個 `"r2_buckets": [ … ]` 項目（並注意前後逗號，保持 JSON 正確）。沒有刪的話，`wrangler deploy` 會失敗，錯誤是 r2/buckets API 錯誤。
    - 後果：正式站的後台**無法上傳照片**（`/api/admin/upload` 回傳「圖片服務暫時無法使用」），`/api/media/*` 也無法讀圖。建案照片目前都用 `public/assets/` 的靜態檔。
    - 等 R2 啟用、建立 `dua-plus-media` bucket 後，就不要再刪這段，讓 `r2_buckets` 保持原樣，上傳功能就會恢復。（`dist/` 每次 build 都會重新產生，所以每次部署都要重做這一步，直到 R2 啟用。）
-4. 部署：`npx wrangler deploy --config dist/server/wrangler.json`（或在 deploy 資料夾使用 `node node_modules/wrangler/bin/wrangler.js deploy --config dist/server/wrangler.json`）。
+4. 部署：`pnpm exec wrangler deploy --config dist/server/wrangler.json`（或 `node node_modules/wrangler/bin/wrangler.js deploy --config dist/server/wrangler.json`），在 deploy 資料夾執行。
 5. **套用新 migration 到正式 D1**：
    ```sh
    wrangler d1 migrations apply dua-plus-db --remote
    ```
-   - **目前 `0001_inquiries` 在正式環境尚未套用**。未套用前，洽詢表單會回「暫時無法完成操作」，後台洽詢名單與洽詢補送也無法使用（其他功能正常）。
+   - 2026-11-04 確認：正式 D1 的 `d1_migrations` 已有 `0000`、`0001_inquiries`，`migrations list --remote` 顯示「No migrations to apply」。第 5 批沒有新增 migration（自訂章節存在建案 JSON）。
    - 若正式 D1 當初是用 `d1 execute --file` 手動建立 0000（沒有 `d1_migrations` 紀錄），上面的指令會嘗試重跑 0000 而失敗，改成只跑新檔：`wrangler d1 execute dua-plus-db --remote --file drizzle/0001_inquiries.sql`。
 6. 密鑰：第一次或有新增時，`wrangler secret put DUA_AUTH_PEPPER` 等（名稱見第 4 章）。
 7. 驗證：開正式網址首頁、`/projects`、星峠詳細頁、`/contact` 送一筆虛構洽詢、`/admin/login` 登入看「洽詢名單」。
@@ -240,7 +241,6 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 ## 10. 已知待辦
 
 - **R2 未啟用**：正式站後台照片上傳停用（精靈第 2 步也無法上傳；刊登需至少 1 張照片，正式站新建案目前只能先存草稿，或用 `d1 execute` 寫入 `/assets/...` 照片路徑）；每次部署前要從 `dist/server/wrangler.json` 移除 `r2_buckets`（第 6 章）。啟用 R2 並建立 `dua-plus-media` 後恢復。
-- **正式 D1 尚未套用 `0001_inquiries`**：部署時執行 `wrangler d1 migrations apply dua-plus-db --remote`。
 - **Google 端**：公司總表要有「洽詢名單」分頁，Apps Script 要貼新版程式碼並發布新版本（第 8 章）。
 - **尚無自訂網域**：目前只用 workers.dev 網址。接上網域後要更新 `DUA_SITE_ORIGIN` 並重新部署。另外 `app/sitemap.ts`、`app/robots.ts` 目前寫死舊的 `https://dua-plus-platform.userforall.chatgpt.site`，要一併改成正式網域。
 - **角色跑步動畫圖待補**：開場畫面（`app/layout.tsx` 掛載的 `components/page-loading-overlay.tsx`，場景在 `components/loading-scene.tsx`）保留了替換點，等 run-cycle 圖稿到位再換上。開場每個瀏覽階段只播一次；要重看請關閉分頁或在 DevTools 清掉 `sessionStorage` 的 `dua:intro-played`。

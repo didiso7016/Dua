@@ -3,8 +3,6 @@
  * the DUA+ characters and a marquee strip. Styles: styles/home-hero.css.
  * Character PNGs are small, so each one is capped at its natural width in CSS.
  */
-import {HeroBlocks,HeroBrick,HeroHammer,HeroKey} from './hero-props';
-
 const marqueeWords=['DUA+ HOME GUIDE','台北','新北','桃園','新竹','台中','台南','高雄','FIND YOUR PLACE','新建案探索','NEW HOMES 2026'];
 
 function Star({className}:{className:string}){
@@ -42,10 +40,9 @@ export function HomeHero(){
     <Star className="dua-hero__star--a"/>
     <Star className="dua-hero__star--b"/>
     <span className="dua-hero__badge" lang="en">DUA+<br/>HOME<br/>GUIDE</span>
-    <span className="dua-hero__char dua-hero__char--pair"><span className="dua-char-breathe"><img src="/assets/characters/dua.5.png" alt="" width={395} height={225} decoding="async" fetchPriority="high"/></span></span>
-    <span className="dua-hero__char dua-hero__char--megaphone"><span className="dua-char-breathe"><img src="/assets/characters/dua.3.png" alt="" width={300} height={265} decoding="async"/></span></span>
-    <span className="dua-hero__char dua-hero__char--cheer"><span className="dua-char-breathe"><img src="/assets/characters/dua.1.png" alt="" width={174} height={288} decoding="async"/></span></span>
-    <HeroKey/><HeroBrick/><HeroHammer/><HeroBlocks/>
+    <span className="dua-hero__char dua-hero__char--pair"><img src="/assets/characters/dua.5.png" alt="" width={395} height={225} decoding="async" fetchPriority="high"/></span>
+    <span className="dua-hero__char dua-hero__char--megaphone"><img src="/assets/characters/dua.3.png" alt="" width={300} height={265} decoding="async"/></span>
+    <span className="dua-hero__char dua-hero__char--cheer"><img src="/assets/characters/dua.1.png" alt="" width={174} height={288} decoding="async"/></span>
     <span className="dua-hero__sticker dua-hero__sticker--tour">建案導覽</span>
     <span className="dua-hero__sticker dua-hero__sticker--plans">看房型</span>
     <span className="dua-hero__sticker dua-hero__sticker--visit">免費預約</span>

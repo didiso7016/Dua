@@ -34,7 +34,7 @@ export default async function Page(){
   <div className="dua-partner">
    <section id="about" className="dua-partner__section dua-info-card dua-partner__about" aria-labelledby="partner-about">
     <div><span className="dua-eyebrow">ABOUT</span><h2 id="partner-about">公司介紹</h2><p>DUA+ 是由{s.company}經營的建案導覽平台，整合不同建商與地區的建案資訊，協助你看懂房型、格局與周邊生活。</p><a className="dua-btn dua-btn--secondary" href="/projects">開始找建案</a></div>
-    <img className="dua-char-idle" src="/assets/characters/dua.5.png" alt="" width={395} height={225} loading="lazy" decoding="async"/>
+    <img src="/assets/characters/dua.5.png" alt="" width={395} height={225} loading="lazy" decoding="async"/>
    </section>
    <section id="positioning" className="dua-partner__section" aria-labelledby="partner-positioning">
     <span className="dua-eyebrow">POSITIONING</span><h2 id="partner-positioning">平台定位</h2>

@@ -39,9 +39,8 @@ html:has(.dua-header:not(.dua-header--compact)) { --dua-header-h: 70px; }
 /* Scrolled state (data-scrolled is toggled by components/header-scroll-state.tsx):
    translucent cream + blur, and a red offset strip that fades in under the ink rule. */
 .dua-header[data-scrolled="true"] {
-  background: color-mix(in srgb, var(--dua-bg) 88%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  /* Solid (no backdrop blur): blur over the animated hero/marquee caused scroll jank. */
+  background: color-mix(in srgb, var(--dua-bg) 97%, transparent);
 }
 
 .dua-header::after {

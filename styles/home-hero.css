@@ -274,13 +274,14 @@
   z-index: 3;
   display: block;
   animation: dua-hero-rise 700ms var(--dua-ease-out) both;
+  /* Shadow on the static wrapper (not the floating img) so the float stays compositor-only. */
+  filter: drop-shadow(4px 5px 0 rgba(20, 24, 20, 0.16));
 }
 
 .dua-hero__char img {
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(4px 5px 0 rgba(20, 24, 20, 0.16));
   animation: dua-hero-float 4.8s ease-in-out infinite;
 }
 

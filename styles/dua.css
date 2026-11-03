@@ -8,7 +8,6 @@
 @import "./components.css";
 @import "./site-chrome.css";
 @import "./home-hero.css";
-@import "./hero-props.css"; /* autonomous construction props + character idle */
 @import "./contact.css"; /* inquiry form/popup, /contact, /privacy, /partner */
 @import "./page-loading.css"; /* TEMPORARY loading preview (2026-11) */
 @import "./admin.css";

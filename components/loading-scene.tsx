@@ -42,7 +42,7 @@ function DuaHome(){
    <circle cx="65" cy="122" r="2.5" fill={INK}/><circle cx="75" cy="122" r="2.5" fill={INK}/>
    <rect x="40" y="144" width="60" height="6" fill="#53B576" stroke={INK} strokeWidth="3"/>
   </svg>
-  <img className="dls-home__logo" src="/assets/logo.png" alt="" decoding="async"/>
+  <span className="dls-home__badge"><img className="dls-home__logo" src="/assets/logo.png" alt="" decoding="async"/></span>
  </>;
 }
 

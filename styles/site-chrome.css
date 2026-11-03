@@ -547,6 +547,15 @@ body:has(.mobile-booking:not([hidden])) .dua-inquiry-fab {
 
 body:has([role="dialog"]) .dua-inquiry-fab { display: none; }
 
+/* Desktop: the fixed FAB stack (洽詢 pill ≈ 100px + back-to-top, 24px from the right edge) used to
+   sit on top of the footer's right-aligned contact text when scrolled to the bottom. Reserve a
+   right-hand lane in the footer so nothing underneath it is covered. Pure CSS, no scroll listener. */
+@media (min-width: 1024px) {
+  .dua-footer:has(.dua-inquiry-fab) {
+    padding-right: calc(24px + env(safe-area-inset-right) + 120px);
+  }
+}
+
 @media print {
   .dua-inquiry-fab,
   .dua-back-to-top { display: none; }

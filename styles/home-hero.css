@@ -1,0 +1,467 @@
+/*
+ * DUA+ homepage hero (components/home-hero.tsx).
+ * Playful Japanese-editorial poster: cream paper, flat colour blocks with 2px ink
+ * outlines and offset colour shadows, big Huninn + Outfit type, the DUA+ characters.
+ * Mobile first; breakpoints 640 / 1024 / 1440px. Only transform / opacity animate.
+ * Character PNGs are capped at their natural width (dua.5 395, dua.3 300, dua.1 174).
+ * Selectors are prefixed with .dua-hero where legacy home rules (.explore-home h1 …) compete.
+ */
+
+.dua-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  overflow: clip;
+  box-sizing: border-box;
+  width: 100%;
+  background: var(--dua-bg);
+  border-bottom: var(--dua-border);
+  color: var(--dua-ink);
+}
+
+.dua-hero__inner {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--dua-space-5);
+  width: 100%;
+  max-width: calc(var(--dua-container) + 160px + var(--dua-gutter) * 2);
+  margin-inline: auto;
+  padding: var(--dua-space-6) var(--dua-gutter) var(--dua-space-6);
+}
+
+/* ------------------------------------------------------------- background */
+.dua-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.dua-hero__bg-dot {
+  position: absolute;
+  border: var(--dua-border);
+  border-radius: 50%;
+}
+
+.dua-hero__bg-dot--lavender {
+  top: 18px;
+  right: -28px;
+  width: 84px;
+  height: 84px;
+  background: var(--dua-lavender);
+  box-shadow: 4px 4px 0 var(--dua-ink);
+}
+
+.dua-hero__bg-dot--pink {
+  bottom: 96px;
+  left: -22px;
+  width: 58px;
+  height: 58px;
+  background: var(--dua-pink);
+  box-shadow: var(--dua-shadow-yellow);
+}
+
+.dua-hero__bg-dot--orange {
+  top: 46%;
+  left: 52%;
+  width: 18px;
+  height: 18px;
+  background: var(--dua-orange);
+}
+
+.dua-hero__star {
+  position: absolute;
+  display: block;
+  height: auto;
+}
+
+.dua-hero__star--bg {
+  top: 12px;
+  left: 46%;
+  width: 26px;
+  color: var(--dua-yellow);
+}
+
+/* ------------------------------------------------------------------- copy */
+.dua-hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.dua-hero .dua-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dua-space-2);
+  margin: 0 0 var(--dua-space-3);
+  padding: 4px 12px;
+  border: var(--dua-border);
+  border-radius: var(--dua-radius-pill);
+  background: var(--dua-surface);
+  box-shadow: var(--dua-shadow-sm);
+  color: var(--dua-ink);
+  font-family: var(--dua-font-mono);
+  font-size: var(--dua-text-xs);
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.dua-hero .dua-hero__eyebrow::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dua-red);
+}
+
+.dua-hero .dua-hero__display {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: var(--dua-ink);
+  font-family: var(--dua-font-en);
+  font-size: clamp(3rem, 1.4rem + 5vw, 7rem);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+
+.dua-hero .dua-hero__display-accent {
+  color: var(--dua-sky);
+  -webkit-text-stroke: 2px var(--dua-ink);
+  paint-order: stroke fill;
+  text-shadow: 4px 4px 0 var(--dua-ink);
+}
+
+.dua-hero .dua-hero__title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08em;
+  margin: var(--dua-space-4) 0 0;
+  color: var(--dua-ink);
+  font-family: var(--dua-font-display);
+  font-size: clamp(2.25rem, 1.4rem + 3.4vw, 4.5rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  font-feature-settings: "palt";
+}
+
+.dua-hero__title-line { display: block; white-space: nowrap; }
+.dua-hero__title-line--indent { padding-left: 0.6em; }
+
+.dua-hero .dua-hero__mark {
+  display: inline-block;
+  margin: 0 0.06em 0 0.1em;
+  padding: 0 0.16em;
+  border: var(--dua-border);
+  border-radius: var(--dua-radius-md);
+  background: var(--dua-red);
+  box-shadow: 4px 4px 0 var(--dua-ink);
+  color: var(--dua-on-red);
+  line-height: 1.15;
+  transform: rotate(-4deg);
+}
+
+.dua-hero .dua-hero__lead {
+  max-width: 30em;
+  margin: var(--dua-space-4) 0 0;
+  color: var(--dua-ink-2);
+  font-size: var(--dua-text-base);
+  line-height: var(--dua-leading-normal);
+}
+
+.dua-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dua-space-3);
+  margin-top: var(--dua-space-5);
+}
+
+/* ------------------------------------------------------------------ stage */
+.dua-hero__stage {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 1 / 0.9;
+  margin-inline: auto;
+}
+
+.dua-hero__shape {
+  position: absolute;
+  box-sizing: border-box;
+  border: var(--dua-border);
+}
+
+.dua-hero__shape--sky {
+  top: 12%;
+  left: 7%;
+  width: 80%;
+  height: 58%;
+  border-radius: 44px;
+  background: var(--dua-sky);
+  box-shadow: 10px 10px 0 var(--dua-yellow), 10px 10px 0 2px var(--dua-ink);
+}
+
+.dua-hero__shape--red {
+  top: 2%;
+  right: 2%;
+  width: 24%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--dua-red);
+  box-shadow: 5px 5px 0 var(--dua-ink);
+}
+
+.dua-hero__shape--grass {
+  bottom: 2%;
+  left: 0;
+  width: 40%;
+  aspect-ratio: 2 / 1;
+  border-radius: 999px 999px 0 0;
+  border-bottom-width: 2px;
+  background: var(--dua-grass);
+  box-shadow: 6px 6px 0 var(--dua-sky);
+}
+
+.dua-hero__shape--yellow {
+  right: 0;
+  bottom: 12%;
+  width: 36%;
+  height: 13%;
+  border-radius: var(--dua-radius-pill);
+  background: var(--dua-yellow);
+  box-shadow: 5px 5px 0 var(--dua-orange);
+  transform: rotate(-8deg);
+}
+
+.dua-hero__star--a {
+  top: 4%;
+  left: 2%;
+  width: 34px;
+  color: var(--dua-yellow);
+}
+
+.dua-hero__star--b {
+  right: 30%;
+  bottom: 30%;
+  width: 24px;
+  color: var(--dua-pink);
+}
+
+.dua-hero__badge {
+  position: absolute;
+  top: 16%;
+  left: 11%;
+  z-index: 2;
+  color: var(--dua-ink);
+  font-family: var(--dua-font-en);
+  font-size: clamp(0.75rem, 0.6rem + 0.6vw, 1.125rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+/* Characters: wrapper handles entrance, the image floats. */
+.dua-hero__char {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  animation: dua-hero-rise 700ms var(--dua-ease-out) both;
+}
+
+.dua-hero__char img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(4px 5px 0 rgba(20, 24, 20, 0.16));
+  animation: dua-hero-float 4.8s ease-in-out infinite;
+}
+
+.dua-hero__char--pair {
+  left: 18%;
+  bottom: 26%;
+  width: 60%;
+  max-width: 395px;
+  animation-delay: 120ms;
+}
+
+.dua-hero__char--megaphone {
+  top: 20%;
+  right: -9%;
+  z-index: 2;
+  width: 40%;
+  max-width: 300px;
+  animation-delay: 260ms;
+}
+
+.dua-hero__char--megaphone img { animation-delay: -1.6s; animation-duration: 5.4s; }
+
+.dua-hero__char--cheer {
+  bottom: 3%;
+  left: 7%;
+  z-index: 4;
+  width: 25%;
+  max-width: 174px;
+  animation-delay: 400ms;
+}
+
+.dua-hero__char--cheer img { animation-delay: -3s; animation-duration: 4.2s; }
+
+/* Sticker labels: round, white 3px ring, slightly rotated. */
+.dua-hero__sticker {
+  position: absolute;
+  z-index: 5;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(64px, 18%, 96px);
+  aspect-ratio: 1;
+  padding: 6px;
+  border: var(--dua-border);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px var(--dua-surface), 3px 3px 0 3px var(--dua-ink);
+  color: var(--dua-ink);
+  font-family: var(--dua-font-display);
+  font-size: clamp(0.75rem, 0.62rem + 0.5vw, 1rem);
+  line-height: 1.15;
+  text-align: center;
+  animation: dua-hero-pop 520ms var(--dua-ease) both;
+}
+
+.dua-hero__sticker--tour {
+  top: 0;
+  left: 30%;
+  background: var(--dua-yellow);
+  transform: rotate(-4deg);
+  animation-delay: 520ms;
+}
+
+.dua-hero__sticker--plans {
+  top: 30%;
+  left: 0;
+  background: var(--dua-grass-soft);
+  transform: rotate(4deg);
+  animation-delay: 620ms;
+}
+
+.dua-hero__sticker--visit {
+  right: 6%;
+  bottom: 0;
+  background: var(--dua-red);
+  color: var(--dua-on-red);
+  transform: rotate(-4deg);
+  animation-delay: 720ms;
+}
+
+/* Copy entrance (staggered fade + rise). */
+.dua-hero__copy > * { animation: dua-hero-rise 640ms var(--dua-ease-out) both; }
+.dua-hero__copy > :nth-child(2) { animation-delay: 80ms; }
+.dua-hero__copy > :nth-child(3) { animation-delay: 160ms; }
+.dua-hero__copy > :nth-child(4) { animation-delay: 240ms; }
+.dua-hero__copy > :nth-child(5) { animation-delay: 320ms; }
+
+/* ---------------------------------------------------------------- marquee */
+.dua-hero__marquee {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-top: var(--dua-border);
+  background: var(--dua-ink);
+  color: var(--dua-bg);
+}
+
+.dua-hero__marquee-track {
+  display: flex;
+  width: max-content;
+  animation: dua-hero-marquee 38s linear infinite;
+}
+
+.dua-hero__marquee-group {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.dua-hero__marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dua-space-4);
+  padding: 10px 0 10px var(--dua-space-4);
+  font-family: var(--dua-font-en);
+  font-size: var(--dua-text-sm);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.dua-hero__marquee-dot { color: var(--dua-yellow); }
+
+/* -------------------------------------------------------------- keyframes */
+@keyframes dua-hero-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dua-hero-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Stickers keep their tilt while popping in (tilt comes from --dua-hero-tilt). */
+@keyframes dua-hero-pop {
+  from { opacity: 0; transform: scale(0.6) rotate(var(--dua-hero-tilt, 0deg)); }
+  to { opacity: 1; transform: scale(1) rotate(var(--dua-hero-tilt, 0deg)); }
+}
+
+.dua-hero__sticker--tour,
+.dua-hero__sticker--visit { --dua-hero-tilt: -4deg; }
+.dua-hero__sticker--plans { --dua-hero-tilt: 4deg; }
+
+@keyframes dua-hero-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ------------------------------------------------------------- breakpoints */
+@media (min-width: 640px) {
+  .dua-hero__inner { padding-block: var(--dua-space-7); gap: var(--dua-space-6); }
+  .dua-hero__bg-dot--lavender { top: 32px; right: 4%; width: 110px; height: 110px; }
+  .dua-hero__marquee-item { padding-block: 12px; font-size: var(--dua-text-base); }
+}
+
+@media (min-width: 1024px) {
+  .dua-hero__inner {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--dua-space-6);
+    min-height: clamp(560px, calc(86vh - var(--dua-header-h) - 48px), 860px);
+    padding-block: var(--dua-space-7);
+  }
+  .dua-hero__stage { max-width: 600px; margin-right: 0; }
+  .dua-hero__bg-dot--lavender { top: auto; right: auto; bottom: 90px; left: 44%; width: 72px; height: 72px; }
+  .dua-hero__bg-dot--pink { left: 2%; bottom: 120px; }
+  .dua-hero__star--bg { left: 40%; top: 48px; width: 34px; }
+}
+
+@media (min-width: 1440px) {
+  .dua-hero__inner { gap: var(--dua-space-8); }
+  .dua-hero__stage { max-width: 640px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dua-hero__char,
+  .dua-hero__char img,
+  .dua-hero__sticker,
+  .dua-hero__copy > *,
+  .dua-hero__marquee-track {
+    animation: none !important;
+  }
+}

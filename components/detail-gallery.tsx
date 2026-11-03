@@ -1,0 +1,31 @@
+'use client';
+import {useEffect,useRef,useState} from 'react';
+import {planCategory,roomCategories} from '@/lib/floor-plans';
+import type {Photo,Project} from '@/lib/model';
+import {Dialog,DialogContent,DialogTitle,DialogClose,DialogDescription} from '@/components/ui/dialog';
+
+export function DetailGallery({photos,label='建案照片',hero=false,fullBleed=false,captionless=false}:{photos:Photo[];label?:string;hero?:boolean;fullBleed?:boolean;captionless?:boolean}){
+ const [index,setIndex]=useState(0),[open,setOpen]=useState(false);
+ const [paused,setPaused]=useState(false),[inView,setInView]=useState(false),[reduced,setReduced]=useState(true),[hover,setHover]=useState(false),[focus,setFocus]=useState(false);
+ const gallery=useRef<HTMLElement>(null);
+ useEffect(()=>{const mq=matchMedia('(prefers-reduced-motion: reduce)');const sync=()=>setReduced(mq.matches);sync();mq.addEventListener('change',sync);if(!gallery.current)return;const ob=new IntersectionObserver(([e])=>setInView(e.isIntersecting),{threshold:.25});ob.observe(gallery.current);return()=>{mq.removeEventListener('change',sync);ob.disconnect()}},[]);
+ useEffect(()=>{if(!hero||photos.length<2||paused||open||!inView||reduced||hover||focus)return;const id=setInterval(()=>{if(!document.hidden)setIndex(i=>(i+1)%photos.length)},6000);return()=>clearInterval(id)},[hero,photos.length,paused,open,inView,reduced,hover,focus]);
+ const start=useRef<{x:number;y:number;id:number}|null>(null),suppressClick=useRef(0);
+ if(!photos.length)return null;
+ const current=Math.min(index,photos.length-1),photo=photos[current];
+ const select=(value:number)=>{setPaused(true);setIndex((value+photos.length)%photos.length)};
+ const controls=<div className="detail-gallery-navigation"><div className="detail-gallery-steps" aria-label={label+'照片選擇'}>{photos.map((p,i)=><button key={i} type="button" aria-label={'查看第 '+(i+1)+' 張：'+(p.caption||label)} aria-pressed={current===i} onClick={()=>select(i)}><span/><small>{p.caption||String(i+1).padStart(2,'0')}</small></button>)}</div><div className="detail-gallery-arrows"><button type="button" onClick={()=>select(current-1)} aria-label={label+'上一張'}>←</button><span>{String(current+1).padStart(2,'0')} / {String(photos.length).padStart(2,'0')}</span><button type="button" onClick={()=>select(current+1)} aria-label={label+'下一張'}>→</button></div></div>;
+ return <><figure ref={gallery} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} onFocusCapture={()=>setFocus(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node))setFocus(false)}} className={'detail-gallery'+(hero?' detail-gallery-hero':'')+(fullBleed?' detail-gallery-bleed':'')} role="region" aria-roledescription="輪播" aria-label={label} tabIndex={photos.length>1?0:undefined} onKeyDown={e=>{if(photos.length<2)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();select(current+(e.key==='ArrowLeft'?-1:1))}}}>
+ <button type="button" className="detail-gallery-image" aria-label={'放大'+(photo.caption||label)} onPointerDown={e=>{if(e.pointerType==='touch'||e.pointerType==='pen')start.current={x:e.clientX,y:e.clientY,id:e.pointerId}}} onPointerCancel={()=>{start.current=null}} onPointerUp={e=>{const point=start.current;start.current=null;if(!point||point.id!==e.pointerId||photos.length<2)return;const dx=e.clientX-point.x,dy=e.clientY-point.y;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.3){suppressClick.current=Date.now()+500;select(current+(dx<0?1:-1))}}} onClick={()=>{if(Date.now()>suppressClick.current){setPaused(true);setOpen(true)}}}><img key={photo.url} src={photo.url} alt={photo.caption||label} draggable={false} loading={hero?'eager':'lazy'}/></button>
+ {!captionless&&photo.caption&&<figcaption className="detail-gallery-caption"><span aria-live="polite" aria-atomic="true">{photo.caption}</span></figcaption>}{photos.length>1&&controls}
+ </figure><Dialog open={open} onOpenChange={setOpen}><DialogContent className="image-dialog" showCloseButton={false} onOpenAutoFocus={e=>e.preventDefault()}><div className="row"><DialogTitle>{photo.caption||label}</DialogTitle><DialogClose asChild><button type="button">關閉 ✕</button></DialogClose></div><DialogDescription className="sr-only">完整檢視照片，關閉後回到原來的位置。</DialogDescription><img src={photo.url} alt={photo.caption||label}/>{photos.length>1&&<div className="detail-gallery-dialog-controls"><button type="button" onClick={()=>select(current-1)}>← 上一張</button><span aria-live="polite">{current+1} / {photos.length}</span><button type="button" onClick={()=>select(current+1)}>下一張 →</button></div>}</DialogContent></Dialog></>;
+}
+
+export function PlanGallery({plans}:{plans:Project['plans']}){
+ const [category,setCategory]=useState(''),[index,setIndex]=useState(0);
+ if(!plans.length)return <p>格局資料待補。</p>;
+ const categories=[...roomCategories,'其他房型'].filter(c=>plans.some(p=>planCategory(p)===c));
+ const active=categories.includes(category)?category:categories[0];
+ const filtered=plans.filter(p=>planCategory(p)===active),current=Math.min(index,filtered.length-1),plan=filtered[current];
+ return <div className="detail-plans">{categories.length>1&&<div className="detail-room-switch" role="group" aria-label="選擇房型">{categories.map(c=><button type="button" key={c} aria-pressed={active===c} onClick={()=>{setCategory(c);setIndex(0)}}>{c}</button>)}</div>}{filtered.length>1&&<div className="detail-plan-switch" role="group" aria-label="選擇戶別">{filtered.map((p,i)=><button type="button" key={i} aria-pressed={current===i} onClick={()=>setIndex(i)}>{p.name||String(i+1)} 戶</button>)}</div>}<article className="jp-floor-plan"><div className="jp-plan-copy"><span className="jp-kicker">找到適合自己的空間</span><h3>{plan.name}<small>戶</small></h3><p className="jp-plan-rooms">{plan.rooms}</p><p>{plan.area||'本戶坪數待確認'}</p>{plan.description&&<p className="text-block plan-description">{plan.description}</p>}<p className="muted">家具配置僅供參考，依原圖說明及買賣契約為準。</p></div><div className="jp-plan-image">{plan.image?<DetailGallery key={active+'-'+current} photos={[{url:plan.image,caption:plan.name+'戶格局圖'}]} label={plan.name+'戶格局圖'}/>:<p>格局圖待補。</p>}</div></article></div>;
+}

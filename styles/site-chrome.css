@@ -1,0 +1,435 @@
+/*
+ * DUA+ site chrome — shared Header (.dua-header) and Footer (.dua-footer).
+ * The first template ("樣板頁") built on the new design system.
+ * Mobile first; breakpoints 640 / 1024 / 1440px (see tokens.css).
+ */
+
+/* ===================================================== Scroll / anchors */
+/* Anchors land below the sticky header (height in --dua-header-h, tokens.css). */
+html:has(.dua-header) { scroll-padding-top: var(--dua-header-h); }
+
+/* The regular (non-compact) header is taller than the compact one. */
+html:has(.dua-header:not(.dua-header--compact)) { --dua-header-h: 70px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.dua-header) { scroll-behavior: smooth; }
+}
+
+/* ================================================================= Header */
+/* Sticky on every public page; above page content (detail nav z 20, booking bar z 30,
+   back-to-top z 35), below shadcn dialogs/sheets (z 50). */
+.dua-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dua-space-2) var(--dua-space-3);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--dua-space-3) max(var(--dua-gutter), calc((100% - var(--dua-container)) / 2));
+  border-bottom: var(--dua-border);
+  background: var(--dua-bg);
+  color: var(--dua-ink);
+}
+
+/* Scrolled state (data-scrolled is toggled by components/header-scroll-state.tsx):
+   translucent cream + blur, and a red offset strip that fades in under the ink rule. */
+.dua-header[data-scrolled="true"] {
+  background: color-mix(in srgb, var(--dua-bg) 88%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.dua-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 3px;
+  margin-top: 2px; /* sits just below the 2px border */
+  background: var(--dua-red);
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: opacity var(--dua-dur-base) var(--dua-ease-out), transform var(--dua-dur-base) var(--dua-ease-out);
+  pointer-events: none;
+}
+
+.dua-header[data-scrolled="true"]::after {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+/* Project detail: the anchor navigation sticks right under the header instead of at top:0. */
+.dua-header ~ main .detail-navigation { top: var(--dua-header-h); }
+
+.dua-header__brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--dua-radius-sm);
+  line-height: 0;
+}
+
+.dua-header__logo {
+  display: block;
+  width: 84px;
+  height: auto;
+  max-height: 44px;
+  object-fit: contain;
+}
+
+.dua-header__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0 var(--dua-space-1);
+  margin-left: auto;
+  min-width: 0;
+}
+
+/* Nav links share the .dua-btn--text look (ResumeSearchLink renders a bare <a>). */
+.dua-header__nav > a {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 8px;
+  border-radius: var(--dua-radius-sm);
+  color: var(--dua-ink);
+  font-family: var(--dua-font-sans);
+  font-size: var(--dua-text-sm);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dua-header__nav > a::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 5px;
+  height: 6px;
+  background-color: var(--dua-red);
+  -webkit-mask: var(--dua-wave) repeat-x left center / 12px 6px;
+  mask: var(--dua-wave) repeat-x left center / 12px 6px;
+  opacity: 0;
+  transform: scaleX(0.4);
+  transform-origin: left center;
+  transition: opacity var(--dua-dur-base) var(--dua-ease-out), transform var(--dua-dur-base) var(--dua-ease-out);
+  pointer-events: none;
+}
+
+.dua-header__nav > a:hover { color: var(--dua-ink); }
+
+.dua-header__nav > a:hover::after,
+.dua-header__nav > a:focus-visible::after,
+.dua-header__nav > a[aria-current="page"]::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Compact header (home + project detail): fixed height, one line. */
+.dua-header--compact {
+  flex-wrap: nowrap;
+  height: 64px;
+  min-height: 0;
+  padding-block: var(--dua-space-2);
+}
+
+.dua-header--compact .dua-header__logo { width: 76px; max-height: 40px; }
+.dua-header--compact .dua-header__nav { flex-wrap: nowrap; gap: 0; }
+.dua-header--compact .dua-header__nav > a { padding-inline: 6px; font-size: 13px; letter-spacing: 0.02em; }
+.dua-header--compact .dua-header__nav > a::after { left: 6px; right: 6px; }
+
+@media (min-width: 640px) {
+  html:has(.dua-header:not(.dua-header--compact)) { --dua-header-h: 80px; }
+  .dua-header { min-height: 76px; padding-block: var(--dua-space-4); }
+  .dua-header__logo { width: 110px; max-height: 52px; }
+  .dua-header__nav { gap: 0 var(--dua-space-3); }
+  .dua-header__nav > a { padding-inline: 10px; font-size: var(--dua-text-base); }
+  .dua-header__nav > a::after { left: 10px; right: 10px; }
+
+  /* Kept at 74px: the project opening uses calc(100svh - 74px). */
+  .dua-header--compact { height: 74px; min-height: 0; padding-block: 10px; }
+  .dua-header--compact .dua-header__logo { width: 104px; max-height: 46px; }
+  .dua-header--compact .dua-header__nav { gap: 0 var(--dua-space-2); }
+  .dua-header--compact .dua-header__nav > a { padding-inline: 10px; font-size: var(--dua-text-sm); letter-spacing: 0.06em; }
+  .dua-header--compact .dua-header__nav > a::after { left: 10px; right: 10px; }
+}
+
+@media (min-width: 1024px) {
+  html:has(.dua-header:not(.dua-header--compact)) { --dua-header-h: 88px; }
+  .dua-header { min-height: 84px; }
+  .dua-header__logo { width: 124px; }
+  .dua-header__nav { gap: 0 var(--dua-space-4); }
+  .dua-header--compact { height: 74px; min-height: 0; }
+  .dua-header--compact .dua-header__nav > a { font-size: var(--dua-text-base); }
+}
+
+@media (min-width: 1440px) {
+  .dua-header { padding-inline: max(var(--dua-gutter), calc((100% - var(--dua-container) - 160px) / 2)); }
+  .dua-header__nav { gap: 0 var(--dua-space-5); }
+}
+
+/* ================================================================= Footer */
+/* Compact: ~18px vertical padding on phones, 24px from tablet up; one row on desktop. */
+.dua-footer {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 18px var(--dua-gutter);
+  border-top: var(--dua-border);
+  background: var(--dua-bg-alt);
+  color: var(--dua-ink);
+}
+
+.dua-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.dua-footer__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dua-space-2);
+  max-width: var(--dua-container);
+  margin-inline: auto;
+}
+
+.dua-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--dua-space-3);
+  min-width: 0;
+}
+
+.dua-footer__house {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 48px;
+  border-radius: var(--dua-radius-sm);
+  line-height: 0;
+}
+
+.dua-footer__house svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.dua-footer__brand p {
+  margin: 0;
+  font-family: var(--dua-font-display);
+  font-size: var(--dua-text-base);
+  line-height: var(--dua-leading-tight);
+  letter-spacing: 0.04em;
+  font-feature-settings: "palt";
+}
+
+.dua-footer__company { min-width: 0; }
+
+.dua-footer__contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+/* Links keep a 44px touch target; the address line is plain text and stays tight. */
+.dua-footer__contact > p,
+.dua-footer__contact > a {
+  display: flex;
+  align-items: center;
+  gap: var(--dua-space-2);
+  margin: 0;
+  padding: 4px 0;
+  box-sizing: border-box;
+  font-size: var(--dua-text-sm);
+  line-height: 1.45;
+}
+
+.dua-footer__contact > a { min-height: 44px; padding-block: 0; }
+
+.dua-footer__contact > a {
+  border-radius: var(--dua-radius-sm);
+  font-weight: 500;
+}
+
+.dua-footer__contact > a span {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: var(--dua-line-thin);
+  text-underline-offset: 0.25em;
+}
+
+.dua-footer__contact > a:hover span { text-decoration-color: var(--dua-red); }
+
+.dua-footer__contact svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--dua-red-ink);
+}
+
+.dua-footer__contact span { overflow-wrap: anywhere; }
+
+.dua-footer__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dua-space-2);
+  padding-top: var(--dua-space-1);
+}
+
+.dua-footer__socials > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+  border: var(--dua-border);
+  border-radius: 50%;
+  background: var(--dua-surface);
+  color: var(--dua-ink);
+  box-shadow: var(--dua-shadow-sm);
+  transition: transform var(--dua-dur-fast) var(--dua-ease-out);
+}
+
+.dua-footer__socials > a:hover {
+  color: var(--dua-ink);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--dua-shadow);
+}
+
+.dua-footer__socials > a:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.dua-footer__socials svg { width: 20px; height: 20px; }
+
+/* Room for the sticky mobile booking bar on project pages. */
+.has-booking ~ .dua-footer {
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 640px) {
+  .dua-footer { padding-block: var(--dua-space-5); }
+  .dua-footer__house { width: 56px; }
+  .dua-footer__contact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--dua-space-5);
+  }
+  .dua-footer__contact > p { flex-basis: 100%; }
+  .dua-footer__socials { padding-top: 0; }
+  .has-booking ~ .dua-footer { padding-bottom: var(--dua-space-5); }
+}
+
+@media (min-width: 1024px) {
+  .dua-footer__main {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--dua-space-6);
+  }
+  .dua-footer__brand { flex-shrink: 0; }
+  .dua-footer__house { width: 60px; }
+  .dua-footer__brand p { font-size: var(--dua-text-lg); }
+  .dua-footer__company { flex: 1 1 auto; }
+  .dua-footer__contact {
+    justify-content: flex-end;
+    gap: 0 var(--dua-space-5);
+  }
+  .dua-footer__contact > p { flex-basis: auto; }
+}
+
+@media (min-width: 1440px) {
+  .dua-footer { padding-block: 28px; }
+  .dua-footer__main { max-width: calc(var(--dua-container) + 160px); }
+  .dua-footer__house { width: 64px; }
+}
+
+/* ============================================================ Back to top */
+/* components/back-to-top.tsx — rendered once by Footer on every public page.
+   --dua-fab-offset leaves room for a future floating contact button. */
+.dua-back-to-top {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right));
+  bottom: calc(16px + env(safe-area-inset-bottom) + var(--dua-fab-offset));
+  z-index: 35;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  margin: 0;
+  padding: 0;
+  border: var(--dua-border);
+  border-radius: 50%;
+  background: var(--dua-surface);
+  color: var(--dua-ink);
+  box-shadow: 3px 3px 0 var(--dua-red);
+  font: inherit;
+  line-height: 0;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity var(--dua-dur-base) var(--dua-ease-out), transform var(--dua-dur-base) var(--dua-ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dua-back-to-top[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.dua-back-to-top[data-visible="true"]:hover {
+  color: var(--dua-ink);
+  transform: translate(-1px, -2px);
+}
+
+.dua-back-to-top[data-visible="true"]:active { transform: translate(2px, 2px); }
+
+.dua-back-to-top svg { display: block; width: 22px; height: 22px; }
+
+/* Phones: lift above the fixed project booking bar (≈ 66px + safe area) while it shows. */
+body:has(.mobile-booking:not([hidden])) .dua-back-to-top {
+  bottom: calc(82px + env(safe-area-inset-bottom) + var(--dua-fab-offset));
+}
+
+@media (min-width: 581px) {
+  /* The booking bar is only fixed at ≤580px (app/globals.css). */
+  body:has(.mobile-booking:not([hidden])) .dua-back-to-top {
+    bottom: calc(16px + env(safe-area-inset-bottom) + var(--dua-fab-offset));
+  }
+}
+
+@media (min-width: 1024px) {
+  .dua-back-to-top,
+  body:has(.mobile-booking:not([hidden])) .dua-back-to-top {
+    right: calc(24px + env(safe-area-inset-right));
+    bottom: calc(24px + env(safe-area-inset-bottom) + var(--dua-fab-offset));
+  }
+}
+
+/* Hidden when a dialog (gallery lightbox etc.) is open, like the booking bar. */
+body:has([role="dialog"]) .dua-back-to-top { display: none; }

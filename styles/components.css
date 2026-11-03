@@ -1,0 +1,364 @@
+/*
+ * DUA+ shared components (Phase 1)
+ * Buttons, option buttons, stickers, cards and the loading indicator.
+ * Only transform / opacity are animated. Breakpoints: 640 / 1024 / 1440px.
+ */
+
+/* ================================================================ Buttons */
+.dua-btn {
+  --dua-btn-bg: var(--dua-surface);
+  --dua-btn-fg: var(--dua-ink);
+  --dua-btn-shadow: var(--dua-shadow);
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dua-space-2);
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px 22px;
+  border: var(--dua-border);
+  border-radius: var(--dua-radius-pill);
+  background: var(--dua-btn-bg);
+  color: var(--dua-btn-fg);
+  box-shadow: var(--dua-btn-shadow);
+  font-family: var(--dua-font-sans);
+  font-size: var(--dua-text-base);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dua-dur-fast) var(--dua-ease-out);
+}
+
+.dua-btn:hover {
+  color: var(--dua-btn-fg);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--dua-shadow-hover);
+}
+
+.dua-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.dua-btn--primary {
+  --dua-btn-bg: var(--dua-red);
+  --dua-btn-fg: var(--dua-on-red);
+}
+
+.dua-btn--secondary {
+  --dua-btn-bg: var(--dua-surface);
+  --dua-btn-fg: var(--dua-ink);
+}
+
+.dua-btn--sm {
+  min-height: 44px; /* keep the touch target; only the visual padding shrinks */
+  padding: 6px 16px;
+  font-size: var(--dua-text-sm);
+}
+
+.dua-btn--lg {
+  min-height: 56px;
+  padding: 14px 32px;
+  font-size: var(--dua-text-lg);
+}
+
+/* Text button: no frame; a hand-drawn wavy line appears underneath on hover. */
+.dua-btn--text {
+  --dua-btn-bg: transparent;
+  --dua-btn-shadow: none;
+  padding: 8px 6px;
+  border-color: transparent;
+  border-radius: var(--dua-radius-sm);
+}
+
+.dua-btn--text::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 4px;
+  height: 6px;
+  background-color: var(--dua-red);
+  -webkit-mask: var(--dua-wave) repeat-x left center / 12px 6px;
+  mask: var(--dua-wave) repeat-x left center / 12px 6px;
+  opacity: 0;
+  transform: scaleX(0.4);
+  transform-origin: left center;
+  transition: opacity var(--dua-dur-base) var(--dua-ease-out), transform var(--dua-dur-base) var(--dua-ease-out);
+  pointer-events: none;
+}
+
+.dua-btn--text:hover,
+.dua-btn--text:active {
+  transform: none;
+  box-shadow: none;
+}
+
+.dua-btn--text:hover::after,
+.dua-btn--text:focus-visible::after,
+.dua-btn--text[aria-current="page"]::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.dua-btn:disabled,
+.dua-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.dua-btn--text:disabled::after,
+.dua-btn--text[aria-disabled="true"]::after {
+  opacity: 0;
+}
+
+/* ========================================================= Option buttons */
+.dua-option {
+  --dua-option-color: var(--dua-red-soft);
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dua-space-2);
+  min-height: 44px;
+  padding: 8px 18px;
+  border: var(--dua-border);
+  border-radius: var(--dua-radius-pill);
+  background: var(--dua-surface);
+  color: var(--dua-ink);
+  font-family: var(--dua-font-sans);
+  font-size: var(--dua-text-base);
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dua-dur-fast) var(--dua-ease-out);
+}
+
+.dua-option--md { border-radius: var(--dua-radius-md); }
+
+.dua-option:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--dua-shadow-sm);
+}
+
+.dua-option:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.dua-option[aria-pressed="true"],
+.dua-option[aria-checked="true"],
+.dua-option.is-selected {
+  background: var(--dua-option-color);
+  color: var(--dua-ink);
+  font-weight: 700;
+  box-shadow: var(--dua-shadow-sm);
+}
+
+/* ✓ sticker */
+.dua-option[aria-pressed="true"]::after,
+.dua-option[aria-checked="true"]::after,
+.dua-option.is-selected::after {
+  content: "✓";
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  border: var(--dua-line-thin) solid var(--dua-ink);
+  border-radius: 50%;
+  background: var(--dua-red);
+  color: var(--dua-on-red);
+  box-shadow: 0 0 0 2px var(--dua-surface);
+  font-family: var(--dua-font-sans);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  animation: dua-sticker-pop 180ms var(--dua-ease) both;
+  pointer-events: none;
+}
+
+.dua-option:disabled,
+.dua-option[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.dua-option--region { --dua-option-color: var(--dua-filter-region); }
+.dua-option--budget { --dua-option-color: var(--dua-filter-budget); }
+.dua-option--rooms { --dua-option-color: var(--dua-filter-rooms); }
+.dua-option--type { --dua-option-color: var(--dua-filter-type); }
+.dua-option--life { --dua-option-color: var(--dua-filter-life); }
+
+@keyframes dua-sticker-pop {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ================================================================ Sticker */
+.dua-sticker {
+  --dua-sticker-bg: var(--dua-red);
+  --dua-sticker-fg: var(--dua-on-red);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  min-height: 56px;
+  padding: var(--dua-space-2);
+  border: var(--dua-line-width) solid var(--dua-ink);
+  border-radius: 50%;
+  background: var(--dua-sticker-bg);
+  color: var(--dua-sticker-fg);
+  box-shadow: 0 0 0 3px var(--dua-surface), var(--dua-shadow);
+  font-family: var(--dua-font-en);
+  font-size: var(--dua-text-sm);
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.dua-sticker--tilt-left { transform: rotate(-4deg); }
+.dua-sticker--tilt-right { transform: rotate(4deg); }
+
+/* Ink text on every non-red color (contrast rule). */
+.dua-sticker--scribble { --dua-sticker-bg: var(--dua-scribble); --dua-sticker-fg: var(--dua-on-red); }
+.dua-sticker--sky { --dua-sticker-bg: var(--dua-sky); --dua-sticker-fg: var(--dua-ink); }
+.dua-sticker--grass { --dua-sticker-bg: var(--dua-grass); --dua-sticker-fg: var(--dua-ink); }
+.dua-sticker--yellow { --dua-sticker-bg: var(--dua-yellow); --dua-sticker-fg: var(--dua-ink); }
+.dua-sticker--orange { --dua-sticker-bg: var(--dua-orange); --dua-sticker-fg: var(--dua-ink); }
+.dua-sticker--pink { --dua-sticker-bg: var(--dua-pink); --dua-sticker-fg: var(--dua-ink); }
+.dua-sticker--lavender { --dua-sticker-bg: var(--dua-lavender); --dua-sticker-fg: var(--dua-ink); }
+
+/* =================================================================== Card */
+.dua-card {
+  box-sizing: border-box;
+  padding: var(--dua-space-5);
+  border: var(--dua-border);
+  border-radius: var(--dua-radius-md);
+  background: var(--dua-surface);
+  color: var(--dua-ink);
+  box-shadow: var(--dua-shadow);
+}
+
+.dua-card--lg { box-shadow: var(--dua-shadow-lg); }
+
+@media (min-width: 1024px) {
+  .dua-card { padding: var(--dua-space-6); }
+}
+
+/* ================================================================ Loading */
+/*
+ * The character art is isolated in .dua-loading__runner. To switch to the
+ * running sprite later, replace the <img> background with a sprite sheet and
+ * swap the dua-loading-bounce animation for a steps() animation here only.
+ */
+.dua-loading {
+  --dua-loading-size: 72px;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dua-space-2);
+  color: inherit;
+  vertical-align: middle;
+}
+
+.dua-loading--sm { --dua-loading-size: 28px; }
+.dua-loading--md { --dua-loading-size: 72px; }
+.dua-loading--lg { --dua-loading-size: 120px; }
+
+.dua-loading__stage {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: calc(var(--dua-loading-size) * 0.8);
+  height: calc(var(--dua-loading-size) * 1.22);
+  flex-shrink: 0;
+}
+
+.dua-loading__runner {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: auto;
+  height: var(--dua-loading-size);
+  max-width: none;
+  margin-bottom: calc(var(--dua-loading-size) * 0.06);
+  object-fit: contain;
+  animation: dua-loading-bounce 600ms ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.dua-loading__shadow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: calc(var(--dua-loading-size) * 0.55);
+  height: calc(var(--dua-loading-size) * 0.09);
+  margin-left: calc(var(--dua-loading-size) * -0.275);
+  border-radius: 50%;
+  background: var(--dua-ink);
+  opacity: 0.2;
+  animation: dua-loading-shadow 600ms ease-in-out infinite alternate;
+}
+
+.dua-loading__text,
+.dua-loading__static {
+  font-family: var(--dua-font-mono);
+  font-size: var(--dua-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+}
+
+.dua-loading--lg .dua-loading__text,
+.dua-loading--lg .dua-loading__static { font-size: var(--dua-text-sm); }
+
+.dua-loading__static { display: none; }
+
+.dua-loading--inline {
+  flex-direction: row;
+  gap: var(--dua-space-2);
+}
+
+.dua-loading--inline .dua-loading__text { display: none; }
+
+.dua-loading__label { font: inherit; }
+
+@keyframes dua-loading-bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(calc(var(--dua-loading-size) * -0.16)); }
+}
+
+@keyframes dua-loading-shadow {
+  from { opacity: 0.22; transform: scaleX(1); }
+  to { opacity: 0.1; transform: scaleX(0.62); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dua-loading__runner,
+  .dua-loading__shadow { animation: none !important; transform: none; }
+  .dua-loading__text { display: none; }
+  .dua-loading:not(.dua-loading--inline) .dua-loading__static { display: inline; }
+}

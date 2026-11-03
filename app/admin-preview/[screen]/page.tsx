@@ -1,0 +1,1 @@
+import {redirect} from 'next/navigation';export const metadata={robots:{index:false,follow:false}};export default async function Page({params}:{params:Promise<{screen:string}>}){const {screen}=await params;redirect('/admin/'+(['login','forgot','reset','account','change'].includes(screen)?screen:'login'))}

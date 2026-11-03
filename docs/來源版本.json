@@ -1,0 +1,13 @@
+{
+  "site": "DUA+ 建案導覽平台",
+  "source_version": 29,
+  "commit": "bd220f8877431d5fc38cd34235a0b44cf9b51bcb",
+  "prepared_date": "2026-11-03",
+  "export_changes": [
+    "README 與交接文件",
+    "新增 scripts/local-setup.mjs、setup:local 指令",
+    "install:ci 使用跨平台 Node 入口",
+    "排除暫存與秘密"
+  ],
+  "includes_production_data": false
+}

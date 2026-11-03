@@ -1,0 +1,17 @@
+# pnpm 安裝政策：套件需發布滿 7 天才安裝，並只允許列出的套件執行安裝腳本。store 使用 pnpm 預設位置。
+minimumReleaseAge: 10080
+minimumReleaseAgeIgnoreMissingTime: false
+trustLockfile: false
+strictDepBuilds: true
+allowBuilds:
+  esbuild: true
+  fsevents: true
+  sharp: true
+  unrs-resolver: true
+  workerd: true
+enableGlobalVirtualStore: false
+packageImportMethod: auto
+verifyDepsBeforeRun: false
+optimisticRepeatInstall: false
+overrides:
+  miniflare>sharp: 0.35.4

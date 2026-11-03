@@ -1,0 +1,30 @@
+# 相依套件
+/node_modules
+/.pnp
+.pnp.*
+
+# 建置產物（自動產生，可隨時刪除）
+/dist/
+/.next/
+/.vinext/
+/out/
+/coverage
+*.tsbuildinfo
+next-env.d.ts
+
+# 本機 Cloudflare 狀態（本機 D1 / R2 資料庫）
+/.wrangler/
+
+# 本機密鑰（不可提交）
+.dev.vars
+.dev.vars.*
+.env*
+
+# 舊版本機設定（已由 wrangler.jsonc 取代）
+/wrangler.local.json
+/.sites-runtime/
+
+# 記錄與系統檔
+*.log
+.DS_Store
+*.pem

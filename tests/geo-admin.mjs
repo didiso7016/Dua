@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import ts from 'typescript';
+const load=async path=>{const source=ts.transpileModule(fs.readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;return import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'))};
+const {validMapEmbed,validDate,projectMetadata,mapEmbedUrl}=await load('lib/geo.ts');
+assert.equal(validMapEmbed('https://www.google.com/maps/embed?pb=test'),true);
+for(const url of ['javascript:alert(1)','https://www.google.com.evil.test/maps/embed','https://user:pass@www.google.com/maps/embed','<iframe src="https://www.google.com/maps/embed"></iframe>'])assert.equal(validMapEmbed(url),false);
+assert.equal(validDate('2026-02-30'),false);assert.equal(validDate('2026-10-06'),true);assert.equal(validDate(''),true);
+const project={name:'測試案',city:'桃園市',district:'中壢區',rooms:'2房',area:'22–27坪',seoTitle:'',seoDescription:'',mapEmbed:'',map:'',address:'測試地址'};
+assert.equal(projectMetadata(project).title,'測試案');assert.match(projectMetadata(project).description,/全案 22–27坪/);
+assert.equal(projectMetadata({...project,seoTitle:'自訂標題',seoDescription:'自訂摘要'}).description,'自訂摘要');
+assert.equal(mapEmbedUrl({...project,mapEmbed:'https://www.google.com/maps/embed?pb=test'}),'https://www.google.com/maps/embed?pb=test');
+for(const path of ['app/api/admin/projects/route.ts','app/api/admin/settings/route.ts','app/api/admin/upload/route.ts','app/api/admin/bookings/route.ts'])assert.match(fs.readFileSync(path,'utf8'),/await authorize\(req/);
+assert.match(fs.readFileSync('app/admin/page.tsx','utf8'),/if\(!await isAdmin\(\)\)/);
+console.log('GEO validation and admin authorization checks passed');

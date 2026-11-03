@@ -1,0 +1,159 @@
+/*
+ * DUA+ design tokens (Phase 1)
+ * ---------------------------------------------------------------------------
+ * Every new rule should read from these custom properties instead of raw values.
+ *
+ * Breakpoints (custom media queries are not supported, so use these literals):
+ *   mobile   <  640px   (default, no media query)
+ *   tablet   640–1023px @media (min-width: 640px)
+ *   desktop  1024–1439px @media (min-width: 1024px)
+ *   wide     ≥ 1440px   @media (min-width: 1440px)
+ *
+ * Contrast rules:
+ *   - White text is allowed ONLY on --dua-red, --dua-red-ink and --dua-scribble.
+ *   - On sky / grass / orange / yellow / lavender / pink (and all soft tints) use --dua-ink.
+ *   - --dua-uniform / --dua-uniform-soft are for illustrations only.
+ */
+:root {
+  /* Base */
+  --dua-bg: #F8F6F0;
+  --dua-bg-alt: #FFE1E1; /* 粉底 */
+  --dua-surface: #FFFFFF;
+  --dua-ink: #141814;
+  --dua-ink-2: #4A4F4B;
+  --dua-on-red: #FFFFFF;
+
+  /* Red 主色 */
+  --dua-red: #D92A40;
+  --dua-red-soft: #FCE4E6;
+  --dua-red-ink: #B0202F;
+
+  /* Sky 天空藍 — text on sky is ink, never white */
+  --dua-sky: #519AC5;
+  --dua-sky-soft: #E3F0F8;
+  --dua-sky-ink: #1D5E85;
+
+  /* Grass 草地綠 — text on grass is ink, never white */
+  --dua-grass: #53B576;
+  --dua-grass-soft: #E3F4E9;
+  --dua-grass-ink: #23703F;
+
+  /* Orange */
+  --dua-orange: #F7875C;
+  --dua-orange-soft: #FDE6DC;
+  --dua-orange-ink: #A8441C;
+
+  /* Yellow */
+  --dua-yellow: #ECE388;
+  --dua-yellow-soft: #FAF7D9;
+  --dua-yellow-ink: #6B6110;
+
+  /* Lavender */
+  --dua-lavender: #A9BFE5;
+  --dua-lavender-soft: #ECF1FA;
+  --dua-lavender-ink: #3F5F96;
+
+  /* Pink 粉紫 */
+  --dua-pink: #D98DC1;
+  --dua-pink-soft: #F8E6F1;
+  --dua-pink-ink: #8E3F76;
+
+  /* Scribble 手繪紅橘 (white text ok) */
+  --dua-scribble: #CC4831;
+
+  /* Uniform 角色制服綠 — illustration only */
+  --dua-uniform: #394E3D;
+  --dua-uniform-soft: #798B7A;
+
+  /* Filter category colors */
+  --dua-filter-region: var(--dua-sky);
+  --dua-filter-budget: var(--dua-yellow);
+  --dua-filter-rooms: var(--dua-grass);
+  --dua-filter-type: var(--dua-orange);
+  --dua-filter-life: var(--dua-pink);
+
+  /* Lines */
+  --dua-line-width: 2px;
+  --dua-line-thin: 1.5px;
+  --dua-line-color: var(--dua-ink);
+  --dua-border: 2px solid var(--dua-ink);
+
+  /* Fonts */
+  --dua-font-sans: "Noto Sans TC", system-ui, sans-serif;
+  --dua-font-display: "Huninn", "Noto Sans TC", sans-serif;
+  --dua-font-en: "Outfit", "Noto Sans TC", sans-serif;
+  --dua-font-mono: "Space Mono", ui-monospace, monospace;
+
+  /* Type scale — 7 fluid steps */
+  --dua-text-xs: clamp(0.75rem, 0.72rem + 0.12vw, 0.8125rem);   /* 12–13px */
+  --dua-text-sm: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);   /* 14–15px */
+  --dua-text-base: 1rem;                                        /* 16px */
+  --dua-text-lg: clamp(1.125rem, 1.07rem + 0.25vw, 1.25rem);    /* 18–20px */
+  --dua-text-xl: clamp(1.375rem, 1.24rem + 0.6vw, 1.75rem);     /* 22–28px */
+  --dua-text-2xl: clamp(1.75rem, 1.5rem + 1.1vw, 2.5rem);       /* 28–40px */
+  --dua-text-3xl: clamp(2.5rem, 1.95rem + 2.4vw, 4rem);         /* 40–64px */
+  --dua-leading-tight: 1.25;
+  --dua-leading-normal: 1.7;
+
+  /* Radii */
+  --dua-radius-sm: 8px;
+  --dua-radius-md: 14px;
+  --dua-radius-lg: 24px;
+  --dua-radius-pill: 999px;
+
+  /* Offset block shadows — no blur, no grey */
+  --dua-shadow-sm: 2px 2px 0 var(--dua-ink);
+  --dua-shadow: 3px 3px 0 var(--dua-ink);
+  --dua-shadow-hover: 4px 4px 0 var(--dua-ink);
+  --dua-shadow-lg: 6px 6px 0 var(--dua-ink);
+  --dua-shadow-red: 4px 4px 0 var(--dua-red);
+  --dua-shadow-sky: 4px 4px 0 var(--dua-sky);
+  --dua-shadow-grass: 4px 4px 0 var(--dua-grass);
+  --dua-shadow-yellow: 4px 4px 0 var(--dua-yellow);
+
+  /* Spacing */
+  --dua-space-1: 4px;
+  --dua-space-2: 8px;
+  --dua-space-3: 12px;
+  --dua-space-4: 16px;
+  --dua-space-5: 24px;
+  --dua-space-6: 32px;
+  --dua-space-7: 48px;
+  --dua-space-8: 72px;
+
+  /* Motion */
+  --dua-ease: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --dua-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dua-dur-fast: 150ms;
+  --dua-dur-base: 220ms;
+  --dua-dur-slow: 400ms;
+
+  /* Hand-drawn wavy underline, used as a mask (colour comes from background-color) */
+  --dua-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath d='M0 3.5C2 .8 4 .8 6 3.5S10 6.2 12 3.5' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* Admin neutrals — back office only (styles/admin.css), never on public pages */
+  --dua-admin-bg: #F7F8FA;
+  --dua-admin-line: #E1E5EB;
+  --dua-admin-fill: #F0F2F5;
+  --dua-admin-ring: #8A94A3;
+
+  /* Layout */
+  --dua-container: 1200px;
+  --dua-gutter: var(--dua-space-4);
+  /* Sticky public header height; anchors scroll below it (html scroll-padding-top). */
+  --dua-header-h: 64px;
+  /* Extra lift for floating buttons (back-to-top), e.g. a future contact button below it. */
+  --dua-fab-offset: 0px;
+}
+
+@media (min-width: 640px) {
+  :root { --dua-gutter: var(--dua-space-5); --dua-header-h: 74px; }
+}
+
+@media (min-width: 1024px) {
+  :root { --dua-gutter: var(--dua-space-6); }
+}
+
+@media (min-width: 1440px) {
+  :root { --dua-gutter: var(--dua-space-7); }
+}

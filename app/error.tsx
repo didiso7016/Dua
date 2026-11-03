@@ -1,0 +1,1 @@
+'use client';export default function ErrorPage({reset}:{reset:()=>void}){return <main className="container"><section className="panel"><h1>資料暫時無法載入</h1><p>請稍後再試。</p><button onClick={reset}>重新載入</button></section></main>}

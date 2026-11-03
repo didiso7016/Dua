@@ -1,0 +1,38 @@
+/*
+ * TEMPORARY PREVIEW (2026-11): full-screen DuaLoading overlay — components/page-loading-overlay.tsx.
+ * Delete this file (and its @import in styles/dua.css) together with the component.
+ *
+ * The fade-out is driven by CSS alone (1s hold + 300ms fade, `forwards`), so the overlay
+ * never stays stuck even if JS fails; JS removes the node afterwards and replays it on
+ * client-side navigation by remounting it. Keep the timing in sync with LOADING_MIN_MS
+ * and LOADING_FADE_MS in the component.
+ */
+.dua-page-loading {
+  position: fixed;
+  inset: 0;
+  /* Above everything: header (40), back-to-top (35), shadcn dialogs/sheets (50). */
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: var(--dua-bg);
+  color: var(--dua-ink);
+  animation: dua-page-loading-out 300ms ease 1s forwards;
+}
+
+/* JS-side hidden state (aria-hidden is set at the same time). Never blocks clicks while fading. */
+.dua-page-loading--leaving {
+  pointer-events: none;
+}
+
+@keyframes dua-page-loading-out {
+  from { opacity: 1; visibility: visible; }
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+/* Reduced motion: still held for the full duration (DuaLoading shows its static art), but no fade. */
+@media (prefers-reduced-motion: reduce) {
+  .dua-page-loading {
+    animation-duration: 1ms;
+    animation-timing-function: step-end;
+  }
+}

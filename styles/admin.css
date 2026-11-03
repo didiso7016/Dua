@@ -1,0 +1,158 @@
+/*
+ * DUA+ admin reset — keeps the playful public design system out of the back office.
+ *
+ * Admin screens are recognised by their root class:
+ *   .admin-root    — app/admin/ui.tsx (SidebarProvider wrapper)
+ *   .auth-preview  — components/admin-login.tsx (/admin/login, forgot, reset, account, change)
+ *   .admin-sheets  — app/admin/sheets/ui.tsx
+ * `body:has(...)` is used (not the root class itself) so portalled shadcn content
+ * (mobile sidebar sheet, dialogs) is covered too.
+ *
+ * Part 1 lives in `@layer base` next to styles/base.css: same layer, higher specificity,
+ * so Tailwind utilities and the legacy page rules can still refine it.
+ * Part 2 (sidebar) is unlayered on purpose: it must beat the unlayered legacy
+ * `button{…}` rule in app/globals.css and the shadcn utility classes.
+ */
+
+/* ===================================================== 1. element reset */
+@layer base {
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets)) {
+    /* shadcn theme variables → calm neutrals (utilities read these via @theme inline) */
+    --border: var(--dua-admin-line);
+    --input: var(--dua-admin-line);
+    --ring: var(--dua-admin-ring);
+    --accent: var(--dua-admin-fill);
+    --muted: var(--dua-admin-fill);
+    --sidebar: var(--dua-surface);
+    --sidebar-accent: var(--dua-admin-fill);
+    --sidebar-border: var(--dua-admin-line);
+    --sidebar-ring: var(--dua-admin-ring);
+    background: var(--dua-admin-bg);
+    color: var(--dua-ink);
+    font-family: var(--dua-font-sans);
+    line-height: 1.6;
+  }
+
+  /* No paper grain in the back office. */
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets))::before {
+    content: none;
+    display: none;
+  }
+
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets)) :is(h1, h2, h3) {
+    color: var(--dua-ink);
+    font-family: var(--dua-font-sans);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.35;
+    font-feature-settings: normal;
+  }
+
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets)) h1 { font-size: 1.75rem; }
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets)) h2 { font-size: 1.25rem; }
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets)) h3 { font-size: 1.0625rem; }
+
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets)) a {
+    color: var(--dua-sky-ink);
+    text-decoration-thickness: 1px;
+  }
+
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets)) a:hover { color: var(--dua-ink); }
+
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets)) :focus-visible {
+    outline: 2px solid var(--dua-ink);
+    outline-offset: 2px;
+  }
+
+  body:has(:is(.admin-root, .auth-preview, .admin-sheets)) ::selection {
+    background: var(--dua-sky-soft);
+  }
+}
+
+/* ===================================================== 2. sidebar (unlayered) */
+body:has(.admin-root) [data-sidebar="sidebar"] {
+  background: var(--dua-surface);
+  color: var(--dua-ink);
+}
+
+body:has(.admin-root) [data-sidebar="header"] {
+  gap: 2px;
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--dua-admin-line);
+}
+
+body:has(.admin-root) [data-sidebar="header"] p {
+  margin: 4px 0 0;
+  color: var(--dua-ink-2);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+}
+
+body:has(.admin-root) [data-sidebar="content"] { padding: 12px 10px; }
+
+body:has(.admin-root) [data-sidebar="menu"] { gap: 2px; }
+
+/* Plain, left-aligned list rows — undoes the legacy bordered `button{}` look. */
+body:has(.admin-root) [data-sidebar="menu-button"] {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  height: auto;
+  min-height: 42px;
+  margin: 0;
+  padding: 9px 14px 9px 17px;
+  border: 0;
+  border-radius: var(--dua-radius-sm);
+  background: transparent;
+  box-shadow: none;
+  color: var(--dua-ink-2);
+  font-family: var(--dua-font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  text-align: left;
+  text-decoration: none;
+  outline: none;
+  transition: background-color var(--dua-dur-fast) ease, color var(--dua-dur-fast) ease;
+}
+
+body:has(.admin-root) [data-sidebar="menu-button"]:hover {
+  background: var(--dua-admin-fill);
+  color: var(--dua-ink);
+}
+
+body:has(.admin-root) [data-sidebar="menu-button"][data-active="true"] {
+  border-radius: 0 var(--dua-radius-sm) var(--dua-radius-sm) 0;
+  background: var(--dua-red-soft);
+  box-shadow: inset 3px 0 0 var(--dua-red);
+  color: var(--dua-ink);
+  font-weight: 600;
+}
+
+body:has(.admin-root) [data-sidebar="menu-button"]:focus-visible {
+  outline: 2px solid var(--dua-ink);
+  outline-offset: -2px;
+}
+
+/* Sidebar toggle in the admin bar: a compact square icon button. */
+body:has(.admin-root) [data-sidebar="trigger"] {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 1px solid var(--dua-admin-line);
+  border-radius: var(--dua-radius-sm);
+  background: var(--dua-surface);
+  color: var(--dua-ink);
+}
+
+body:has(.admin-root) [data-sidebar="trigger"]:hover { background: var(--dua-admin-fill); }
+
+@media (prefers-reduced-motion: reduce) {
+  body:has(.admin-root) [data-sidebar="menu-button"] { transition: none; }
+}

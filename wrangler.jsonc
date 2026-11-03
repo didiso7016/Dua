@@ -1,0 +1,24 @@
+// Cloudflare Workers 設定（本機開發與正式部署共用）
+// 正式上線前：把 database_id 換成公司 Cloudflare 帳號裡建立的 D1 ID，
+// bucket_name 換成正式的 R2 bucket。binding 名稱 DB / BUCKET 不要改，程式依賴它們。
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dua-plus",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "dua-plus-db",
+      "database_id": "00000000-0000-4000-8000-000000000000",
+      "migrations_dir": "drizzle"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "BUCKET",
+      "bucket_name": "dua-plus-media"
+    }
+  ]
+}

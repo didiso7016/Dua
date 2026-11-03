@@ -1,0 +1,8 @@
+import boundaries from '@/lib/maps/taiwan-districts.json';
+const normalize=(value:string)=>value.trim().replace(/台/g,'臺');
+type District={name:string;path:string;point:number[]};
+export function districtRegion(city:string,district:string){const entry=Object.entries(boundaries).find(([name])=>normalize(name)===normalize(city));if(!entry)return null;const data=entry[1] as {districts:District[]};const active=data.districts.find(d=>normalize(d.name)===normalize(district));return {city:entry[0],districts:data.districts,active}}
+export function DistrictMap({city,district}:{city:string;district:string}){
+ const region=districtRegion(city,district);
+ return <figure className="district-map"><div className="district-map-heading"><span>LOCATION</span><p>{city}・<strong>{district}</strong></p></div>{region?<svg viewBox="0 0 360 320" role="img" aria-label={region.city+'行政區示意圖'+(region.active?'，'+region.active.name+'已標色':'')}><g>{region.districts.map(d=><path key={d.name} d={d.path} fillRule="evenodd" className={region.active?.name===d.name?'district-shape active':'district-shape'}><title>{d.name}</title></path>)}</g>{region.districts.map(d=><text key={d.name} x={d.point[0]} y={d.point[1]} textAnchor="middle" dominantBaseline="central" className={'district-map-label'+(region.active?.name===d.name?' active':'')}>{d.name}</text>)}</svg>:<p className="district-map-unavailable">{city}{district}</p>}<figcaption>{region?.active?<span><i/>本案所在行政區</span>:<span>行政區位置以地址與導航為準</span>}<a href="https://data.gov.tw/dataset/7441" target="_blank" rel="noopener noreferrer">圖資：國土測繪中心</a></figcaption></figure>
+}

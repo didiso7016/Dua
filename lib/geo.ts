@@ -1,0 +1,5 @@
+import type {Project} from './model';
+export function validMapEmbed(value:string){if(!value)return true;try{const u=new URL(value);return u.protocol==='https:'&&['www.google.com','maps.google.com'].includes(u.hostname)&&!u.username&&!u.password&&(u.pathname==='/maps/embed'||u.pathname==='/maps/embed/'||u.pathname.startsWith('/maps/embed/v1/'))}catch{return false}}
+export function validDate(value:string){if(!value)return true;if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;const d=new Date(value+'T00:00:00Z');return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===value}
+export function projectMetadata(p:Project){return {title:p.seoTitle.trim()||p.name,description:p.seoDescription.trim()||`${p.name}，${p.city}${p.district}，${p.rooms}，全案 ${p.area}。查看格局、位置與周邊機能。`}}
+export function mapEmbedUrl(p:Project){if(p.mapEmbed&&validMapEmbed(p.mapEmbed))return p.mapEmbed;const q=p.map.includes('A1cfzqkPy7rZfF9S8')?'320桃園市中壢區廣青路邊華邑代代木5 星峠':p.address||p.city+p.district+p.name;return 'https://www.google.com/maps?q='+encodeURIComponent(q)+'&output=embed'}

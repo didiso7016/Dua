@@ -1,0 +1,6 @@
+import {activeBanners} from '@/lib/discovery';
+import {getHomeSettings} from '@/lib/storage';
+import {publishedBlockPhotos} from '@/lib/content-blocks';
+import {isAdmin} from '@/lib/admin-auth';import {getProjects} from '@/lib/storage';
+import {bucket} from '@/lib/storage';import {errorResponse} from '@/lib/api';
+export async function GET(req:Request,{params}:{params:Promise<{key:string}>}){try{const {key}=await params;if(!/^[a-f0-9-]{36}$/.test(key))return new Response('Not found',{status:404});if(!await isAdmin()){const projects=await getProjects();const url='/api/media/'+key;const published=projects.some(p=>p.photos.some(x=>x.url===url)||p.plans.some(x=>x.image===url)||p.surroundings.some(x=>x.photos.some(y=>y.url===url))||publishedBlockPhotos(p).some(x=>x.url===url));if(!published&&!activeBanners(await getHomeSettings()).some(b=>b.image===url))return new Response('Not found',{status:404})}const obj=await bucket().get(key);if(!obj)return new Response('Not found',{status:404});return new Response(obj.body,{headers:{'Content-Type':obj.httpMetadata?.contentType||'image/jpeg','Cache-Control':'private, max-age=86400','X-Content-Type-Options':'nosniff'}})}catch(e){return errorResponse(e)}}

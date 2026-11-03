@@ -1,0 +1,1 @@
+import {AdminLogin} from '@/components/admin-login';import {currentAccount} from '@/lib/account-auth';import {redirect} from 'next/navigation';export const dynamic='force-dynamic';export const metadata={title:'公司管理後台',robots:{index:false,follow:false},referrer:'no-referrer' as const};export default async function Page(){return <AdminLogin mode="login"/>}

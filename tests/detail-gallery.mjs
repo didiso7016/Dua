@@ -1,0 +1,27 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+// Run the actual component's event handlers with stateful hooks; no DOM or customer data.
+let hooks=[],cursor=0;
+const React={useEffect(){},useState(initial){const i=cursor++;if(!(i in hooks))hooks[i]=initial;return [hooks[i],value=>{hooks[i]=typeof value==='function'?value(hooks[i]):value}]},useRef(initial){const i=cursor++;return hooks[i]??(hooks[i]={current:initial})}};
+const jsx=(type,props,key)=>({type,props:props||{},key});
+const source=ts.transpileModule(fs.readFileSync('components/detail-gallery.tsx','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
+const categoryExports={};vm.runInNewContext(ts.transpileModule(fs.readFileSync('lib/floor-plans.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,{exports:categoryExports});
+const exports={};vm.runInNewContext(source,{exports,require:name=>name==='@/lib/floor-plans'?categoryExports:name==='react'?React:name==='react/jsx-runtime'?{jsx,jsxs:jsx,Fragment:'fragment'}:{Dialog:'Dialog',DialogContent:'DialogContent',DialogTitle:'DialogTitle',DialogClose:'DialogClose',DialogDescription:'DialogDescription'},Date});
+const render=(fn,props)=>{cursor=0;return fn(props)};
+const all=(node,predicate)=>{if(!node||typeof node!=='object')return [];if(Array.isArray(node))return node.flatMap(n=>all(n,predicate));return [...(predicate(node)?[node]:[]),...all(node.props?.children,predicate)]};
+const byLabel=(tree,label)=>all(tree,n=>n.props['aria-label']===label)[0];
+const photo=tree=>all(tree,n=>n.type==='img')[0].props.src;
+const props={label:'交通',photos:[{url:'/one.jpg',caption:'第一張'},{url:'/two.jpg',caption:'第二張'},{url:'/three.jpg',caption:'第三張'}]};
+let tree=render(exports.DetailGallery,props);assert.equal(photo(tree),'/one.jpg');
+byLabel(tree,'交通下一張').props.onClick();tree=render(exports.DetailGallery,props);assert.equal(photo(tree),'/two.jpg');
+byLabel(tree,'查看第 3 張：第三張').props.onClick();tree=render(exports.DetailGallery,props);assert.equal(photo(tree),'/three.jpg');
+byLabel(tree,'交通下一張').props.onClick();tree=render(exports.DetailGallery,props);assert.equal(photo(tree),'/one.jpg');
+const figure=()=>all(tree,n=>n.type==='figure')[0];
+figure().props.onKeyDown({key:'ArrowLeft',preventDefault(){}});tree=render(exports.DetailGallery,props);assert.equal(photo(tree),'/three.jpg');
+let button=byLabel(tree,'放大第三張');button.props.onPointerDown({pointerType:'touch',pointerId:1,clientX:150,clientY:100});button.props.onPointerUp({pointerId:1,clientX:20,clientY:110});button.props.onClick();tree=render(exports.DetailGallery,props);assert.equal(photo(tree),'/one.jpg');assert.equal(all(tree,n=>n.type==='Dialog')[0].props.open,false,'swipe must not open lightbox');
+button=byLabel(tree,'放大第一張');button.props.onPointerDown({pointerType:'touch',pointerId:1,clientX:100,clientY:100});button.props.onPointerUp({pointerId:1,clientX:110,clientY:220});tree=render(exports.DetailGallery,props);assert.equal(photo(tree),'/one.jpg','vertical scroll does not change photo');
+hooks=[];tree=render(exports.DetailGallery,{...props,photos:props.photos.slice(0,1)});assert.equal(byLabel(tree,'交通下一張'),undefined);byLabel(tree,'放大第一張').props.onClick();tree=render(exports.DetailGallery,{...props,photos:props.photos.slice(0,1)});assert.equal(all(tree,n=>n.type==='Dialog')[0].props.open,true);all(tree,n=>n.type==='Dialog')[0].props.onOpenChange(false);tree=render(exports.DetailGallery,{...props,photos:props.photos.slice(0,1)});assert.equal(all(tree,n=>n.type==='Dialog')[0].props.open,false);
+hooks=[];const plans=[{name:'A3',rooms:'2房',area:'',image:'/a3.jpg'},{name:'B1',rooms:'3房',area:'35坪',image:'/b1.jpg'}];tree=render(exports.PlanGallery,{plans});all(tree,n=>n.type==='button'&&n.props['aria-pressed']===false)[0].props.onClick();tree=render(exports.PlanGallery,{plans});assert.equal(all(tree,n=>n.type===exports.DetailGallery)[0].props.photos[0].url,'/b1.jpg');assert.equal(all(tree,n=>n.type==='p'&&n.props.children==='35坪').length,1);assert.equal(all(tree,n=>n.type==='p'&&n.props.children==='本戶坪數待確認').length,0);
+console.log('Detail gallery: arrows, progress selection, wrap, keyboard, swipe, vertical scroll, lightbox, single-photo and plan-data synchronization passed');

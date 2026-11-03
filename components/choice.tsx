@@ -1,0 +1,2 @@
+'use client';import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/components/ui/select';
+export function Choice({value,onChange,options,label}:{value:string;onChange:(s:string)=>void;options:string[];label:string}){return <Select value={value||'__all'} onValueChange={v=>onChange(v==='__all'?'':v)}><SelectTrigger aria-label={label} className="choice"><SelectValue placeholder={label}/></SelectTrigger><SelectContent>{options.map(x=><SelectItem key={x} value={x||'__all'}>{x||label}</SelectItem>)}</SelectContent></Select>}

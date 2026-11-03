@@ -1,0 +1,2 @@
+import {authorize,errorResponse} from '@/lib/api';import {database} from '@/lib/storage';
+export async function GET(req:Request){const d=await authorize(req);if(d)return d;try{const r=await database().prepare('SELECT id,data,created_at FROM bookings ORDER BY created_at DESC LIMIT 100').all<{id:string;data:string;created_at:string}>();return Response.json({bookings:r.results.map(v=>({id:v.id,...JSON.parse(v.data),createdAt:v.created_at}))},{headers:{'Cache-Control':'no-store'}})}catch(e){return errorResponse(e)}}

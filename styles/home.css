@@ -422,12 +422,13 @@
 
 .hf-conversation {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-columns: 96px minmax(0, 1fr);
   gap: var(--dua-space-3);
   align-items: end;
   margin-top: var(--dua-space-5);
 }
-.hf-char { display: block; width: 64px; height: auto; transform: rotate(-3deg); }
+/* Duo art (dua.5.png, 395×225 landscape). Static on purpose: no loop. */
+.hf-char { display: block; width: 96px; height: auto; }
 .hf-speech {
   position: relative;
   padding: var(--dua-space-5) var(--dua-space-4) var(--dua-space-4);
@@ -504,9 +505,9 @@
 
 /* returning visitor */
 .hf-card--resume { padding-top: var(--dua-space-6); }
-.hf-resume__char { position: absolute; top: -26px; right: 18px; width: 78px; height: auto; transform: rotate(4deg); }
+.hf-resume__char { position: absolute; top: -30px; right: 14px; width: 104px; height: auto; }
 .hf-eyebrow { display: block; margin-bottom: var(--dua-space-2); color: var(--dua-red-ink); font-family: var(--dua-font-mono); font-size: var(--dua-text-xs); font-weight: 700; letter-spacing: 0.16em; }
-.hf-resume__title { margin: 0; padding-right: 84px; font-size: var(--dua-text-xl); }
+.hf-resume__title { margin: 0; padding-right: 110px; font-size: var(--dua-text-xl); }
 .hf-resume__title strong { display: block; color: var(--dua-red); font-size: var(--dua-text-2xl); font-weight: 400; }
 .hf-resume__lead { margin: var(--dua-space-3) 0 var(--dua-space-4); color: var(--dua-ink-2); }
 .hf-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dua-space-3) var(--dua-space-4); padding-top: var(--dua-space-4); border-top: var(--dua-border); }
@@ -516,14 +517,14 @@
   .hf-progress { gap: var(--dua-space-3); }
   .hf-dot__num { width: 36px; height: 36px; font-size: 14px; }
   .hf-dot__label { font-size: 11px; }
-  .hf-conversation { grid-template-columns: 96px minmax(0, 1fr); gap: var(--dua-space-5); }
-  .hf-char { width: 96px; }
+  .hf-conversation { grid-template-columns: 150px minmax(0, 1fr); gap: var(--dua-space-5); }
+  .hf-char { width: 150px; }
   .hf-speech { padding: var(--dua-space-5) var(--dua-space-6); }
   .hf-location { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 620px; }
   .hf-types { max-width: 560px; }
   .hf-shortcuts { justify-content: flex-start; }
-  .hf-resume__char { width: 110px; top: -38px; right: 28px; }
-  .hf-resume__title { padding-right: 120px; }
+  .hf-resume__char { width: 150px; top: -44px; right: 24px; }
+  .hf-resume__title { padding-right: 160px; }
 }
 @media (min-width: 1024px) {
   .hf { padding: var(--dua-space-8) 0; }

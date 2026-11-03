@@ -10,7 +10,8 @@
  *   2800–3400  zoom into the double doors (scene → full-screen doors)
  *   3400–4500  the doors swing open slowly to both sides (short hold first), revealing the page
  * The overlay hides itself by CSS at 4500ms even if JS never runs; JS removes the node
- * afterwards and replays it on client-side navigation by remounting it.
+ * afterwards. It plays once per browser session (sessionStorage 'dua:intro-played') and never on
+ * client-side navigation (it is mounted once in app/layout.tsx).
  */
 .dua-page-loading {
   position: fixed;
@@ -19,9 +20,15 @@
   z-index: 1000;
   display: block;
   color: var(--dua-ink);
-  animation: dua-page-loading-out 1ms linear 4.5s forwards;
+  animation: dua-page-loading-out 1ms steps(1, start) 4.5s forwards; /* steps: lands exactly on the end state (no float-rounded 0.9999 progress) */
 }
 .dua-page-loading--leaving { pointer-events: none; }
+/* Tap/click (or Esc) skips: quick fade, then JS removes the node. */
+.dua-page-loading { cursor: pointer; }
+.dua-page-loading.dua-page-loading--skipped { animation: dua-page-loading-skip 200ms ease-out 0s forwards; }
+@keyframes dua-page-loading-skip { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+/* Already played this browser session (class set by the inline head script in app/layout.tsx): never show, never flash. */
+html.dua-intro-played .dua-page-loading { display: none !important; }
 @keyframes dua-page-loading-out { to { opacity: 0; visibility: hidden; pointer-events: none; } }
 
 .dls { position: absolute; inset: 0; display: block; }
@@ -93,7 +100,9 @@
 
 /* Reduced motion: no walking, rising, zoom or swinging — a still scene, then it simply disappears. */
 @media (prefers-reduced-motion: reduce) {
-  .dua-page-loading { animation-delay: 1.2s; }
+  /* !important: base.css's global reduced-motion reset (* { animation-delay: 0ms !important }) would otherwise hide it instantly. */
+  .dua-page-loading { animation-duration: 1ms !important; animation-delay: 1.2s !important; }
+  .dua-page-loading.dua-page-loading--skipped { animation-delay: 0ms !important; }
   .dls-scene, .dls-stage, .dls-bld, .dls-walker, .dls-walker__art, .dls-key, .dls-doors, .dls-door { animation: none !important; }
   .dls-bld { transform: none; }
   .dls-walker { transform: none; }

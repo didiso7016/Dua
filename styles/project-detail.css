@@ -194,15 +194,25 @@
   background: var(--dua-surface);
   box-shadow: var(--dua-shadow-lg);
 }
-.district-map-heading { display: flex; justify-content: space-between; align-items: baseline; gap: var(--dua-space-3); padding-bottom: var(--dua-space-2); border-bottom: var(--dua-line-thin) solid var(--dua-ink); }
+.district-map-heading { display: flex; flex-direction: column; align-items: flex-start; gap: var(--dua-space-2); min-width: 0; padding-bottom: var(--dua-space-2); border-bottom: var(--dua-line-thin) solid var(--dua-ink); }
 .district-map-heading > span { font-family: var(--dua-font-mono); font-size: var(--dua-text-xs); font-weight: 700; letter-spacing: 0.16em; }
 .district-map-heading p { margin: 0; font-weight: 700; }
 .district-map-heading strong { color: var(--dua-red-ink); }
+/* Region labels auto-fit: they wrap inside the label (never clip) and long names step the font down (data-fit from labelFit()). */
+.district-map-place { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; max-width: 100%; min-width: 0; }
+.district-map-name { display: inline-block; max-width: 100%; padding: 2px 10px; border: var(--dua-line-thin) solid var(--dua-ink); border-radius: 10px; background: var(--dua-yellow); color: var(--dua-ink) !important; font-size: var(--dua-text-base); line-height: 1.35; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+.district-map-name[data-fit="long"] { font-size: var(--dua-text-sm); }
+.district-map-name[data-fit="xl"] { font-size: var(--dua-text-xs); }
+.district-map-region { display: inline-block; max-width: 100%; padding: 1px 10px; border: var(--dua-line-thin) solid var(--dua-ink); border-radius: var(--dua-radius-pill); background: var(--dua-sky); font-size: var(--dua-text-sm); line-height: 1.5; overflow-wrap: anywhere; }
+.district-map-region[data-fit="xl"] { font-size: var(--dua-text-xs); }
+.district-map-region--solo { padding: 0; border: 0; background: none; font-size: var(--dua-text-base); }
 .district-map > svg { display: block; width: 100%; height: auto; max-height: 340px; margin: var(--dua-space-2) 0; }
 .district-shape { fill: var(--dua-bg); stroke: var(--dua-ink); stroke-width: 0.8; }
 .district-shape.active { fill: var(--dua-red); }
 .district-map-label { fill: var(--dua-ink-2); font-size: 8px; font-weight: 700; pointer-events: none; }
+.district-map-label.is-long { font-size: 6.5px; }
 .district-map-label.active { fill: var(--dua-on-red); font-size: 10px; }
+.district-map-label.active.is-long { font-size: 8px; }
 .district-map-unavailable { margin: var(--dua-space-5) 0; font-family: var(--dua-font-display); font-size: var(--dua-text-xl); text-align: center; }
 .district-map figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; color: var(--dua-ink-2); font-size: var(--dua-text-xs); }
 .district-map figcaption i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border: 1.5px solid var(--dua-ink); background: var(--dua-red); vertical-align: -1px; }
@@ -344,7 +354,7 @@
 .advantages-track { display: grid; grid-template-columns: minmax(0, 1fr); }
 .advantage-capsule { grid-area: 1 / 1; min-width: 0; opacity: 0; visibility: hidden; transition: opacity var(--dua-dur-base) var(--dua-ease-out); }
 .advantage-capsule.is-current { opacity: 1; visibility: visible; }
-.project-detail .advantage-capsule > button {
+.project-detail .advantage-capsule > .advantage-card {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -361,12 +371,14 @@
   box-shadow: var(--dua-shadow);
   text-align: left;
   cursor: default;
+  user-select: text;
 }
-.advantage-capsule:nth-child(5n+1) > button { background: var(--dua-sky-soft) !important; }
-.advantage-capsule:nth-child(5n+2) > button { background: var(--dua-grass-soft) !important; }
-.advantage-capsule:nth-child(5n+3) > button { background: var(--dua-orange-soft) !important; }
-.advantage-capsule:nth-child(5n+4) > button { background: var(--dua-pink-soft) !important; }
-.advantage-capsule:nth-child(5n+5) > button { background: var(--dua-lavender-soft) !important; }
+.advantages-track { margin: 0; padding: 0; list-style: none; }
+.advantage-capsule:nth-child(5n+1) > .advantage-card { background: var(--dua-sky-soft) !important; }
+.advantage-capsule:nth-child(5n+2) > .advantage-card { background: var(--dua-grass-soft) !important; }
+.advantage-capsule:nth-child(5n+3) > .advantage-card { background: var(--dua-orange-soft) !important; }
+.advantage-capsule:nth-child(5n+4) > .advantage-card { background: var(--dua-pink-soft) !important; }
+.advantage-capsule:nth-child(5n+5) > .advantage-card { background: var(--dua-lavender-soft) !important; }
 .advantage-number { font-family: var(--dua-font-mono); font-size: var(--dua-text-sm); font-weight: 700; }
 .advantage-capsule h3 { margin: 0; font-size: var(--dua-text-lg); }
 .advantage-capsule p { margin: 0; color: var(--dua-ink-2); font-size: var(--dua-text-sm); }
@@ -379,18 +391,23 @@
 }
 
 /* ======================================================= 位置／預約 */
-.project-visit { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--dua-space-7); align-items: start; }
-.visit-location { order: -1; min-width: 0; }
-.visit-booking { min-width: 0; }
+/* 第 5 批：章節標題「預約賞屋」；表單與地圖桌機並排（頂端、高度對齊：兩欄 stretch，表單與地圖各自撐滿），手機上下堆疊（表單在前）。 */
+.visit-lead { margin: calc(var(--dua-space-3) * -1) 0 var(--dua-space-5); color: var(--dua-ink-2); }
+.project-visit { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--dua-space-6); align-items: start; }
+.visit-location { min-width: 0; display: flex; flex-direction: column; }
+.visit-booking { min-width: 0; display: flex; flex-direction: column; }
 .visit-heading h2 { margin: 0 0 var(--dua-space-2); }
 .visit-heading > p { margin: 0 0 var(--dua-space-5); color: var(--dua-ink-2); }
 @media (min-width: 1024px) {
-  .project-visit { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+  .project-visit { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: stretch; gap: var(--dua-space-7); }
   .project-visit.visit-single { grid-template-columns: minmax(0, 1fr); }
-  .visit-location { order: 0; }
+  .visit-booking > form, .visit-booking > .booking-preview-fieldset { flex: 1 1 auto; }
+  .visit-booking > .booking-preview-fieldset > form { height: 100%; box-sizing: border-box; }
+  .project-visit:not(.visit-single) .visit-map { flex: 1 1 auto; display: flex; flex-direction: column; }
+  .project-visit:not(.visit-single) .visit-map iframe { flex: 1 1 auto; height: auto; min-height: 260px; }
 }
 .project-detail .visit-booking form,
-.booking-preview-fieldset { min-width: 0; }
+.booking-preview-fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
 .project-detail .visit-booking form {
   padding: var(--dua-space-5);
   border: var(--dua-border);
@@ -445,9 +462,9 @@
 .map-navigation-label { display: block; padding: 10px 16px; border-top: var(--dua-border); font-size: var(--dua-text-sm); font-weight: 700; }
 .visit-address { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--dua-space-3); margin: var(--dua-space-5) 0; }
 .visit-address h3 { margin: 0 0 2px; font-family: var(--dua-font-mono); font-size: var(--dua-text-xs); font-weight: 700; letter-spacing: 0.12em; }
-.visit-address p { margin: 0; font-weight: 700; }
+.visit-address p { margin: 0; font-weight: 700; overflow-wrap: anywhere; word-break: break-word; }
 .visit-address .visit-hours { color: var(--dua-ink-2); font-weight: 400; }
-@media (min-width: 640px) { .visit-address { grid-template-columns: repeat(2, minmax(0, 1fr)); } .visit-hours { grid-column: 1 / -1; } }
+/* 基地位置與接待中心地址一律上下排列（一列一項），長地址完整換行、不被截斷。 */
 .visit-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--dua-space-3); }
 .visit-action {
   display: flex;
@@ -730,6 +747,34 @@
   .pd-compact .pd-summary { grid-template-columns: minmax(0, 1.5fr) minmax(220px, 0.8fr); gap: var(--dua-space-6); }
   .pd-compact .advantages-track { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 }
+
+/* =====================================================================
+ * 第 5 批：格局說明（空白時整塊不輸出，不留空隙）＋ 自訂章節（三個模板共用）
+ * ===================================================================== */
+.pd-plan-note { margin-top: var(--dua-space-5); padding: var(--dua-space-4) var(--dua-space-5); border: var(--dua-border); border-radius: var(--dua-radius-md); background: var(--dua-surface); box-shadow: var(--dua-shadow-sm); }
+.pd-plan-note .pd-kicker { margin: 0 0 var(--dua-space-2); }
+.pd-plan-note .plan-description { margin: 0; overflow-wrap: anywhere; }
+.pd-custom { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--dua-space-5); align-items: center; min-width: 0; }
+.pd-custom-copy { min-width: 0; }
+.pd-custom-copy .pd-kicker { margin: 0 0 var(--dua-space-2); }
+.pd-custom-copy h2 { margin: 0 0 var(--dua-space-3); overflow-wrap: anywhere; }
+.pd-custom-copy .text-block { margin: 0; overflow-wrap: anywhere; }
+.pd-custom-media { min-width: 0; margin: 0; }
+.pd-custom-media img { display: block; width: 100%; height: auto; max-height: 520px; object-fit: cover; border: var(--dua-border); border-radius: var(--dua-radius-lg); background: var(--dua-surface); box-shadow: var(--dua-shadow); }
+.pd-custom-media figcaption { margin-top: var(--dua-space-2); color: var(--dua-ink-2); font-size: var(--dua-text-sm); }
+.pd-custom--text { max-width: 760px; }
+@media (min-width: 1024px) {
+  .pd-custom:not(.pd-custom--text) { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--dua-space-7); }
+}
+/* classic: dividers like other chapters, cream surface */
+.pd-classic .pd-chapter--custom { border-top: var(--dua-border); background: var(--dua-bg); }
+/* gallery: soft lavender band, image first on wide screens */
+.pd-gallery .pd-chapter--custom { background: var(--dua-lavender-soft); }
+@media (min-width: 1024px) { .pd-gallery .pd-custom:not(.pd-custom--text) .pd-custom-media { order: -1; } }
+/* compact: same white card as the other chapters (inherits .pd-compact .pd-chapter) */
+.pd-compact .pd-custom-copy h2 { font-size: var(--dua-text-xl); }
+.pd-compact .pd-custom-media img { max-height: 360px; box-shadow: var(--dua-shadow-sm); }
+@media (min-width: 1024px) { .pd-compact .pd-custom:not(.pd-custom--text) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--dua-space-6); } }
 
 /* ===================================================== Small screens */
 @media (max-width: 639px) {

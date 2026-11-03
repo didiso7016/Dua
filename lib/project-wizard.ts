@@ -10,12 +10,12 @@ export const wizardSteps:WizardStep[]=[
  {id:'basic',label:'基本資料',hint:'案名、地區、房型坪數、價格與基本資料欄位',panels:['basic'],fields:['id','name','builder','city','district','rooms','area','stage','type','sales','slogan','feature','description','price','facts','roomTypes'],required:['name','city','district']},
  {id:'media',label:'照片與格局',hint:'封面與輪播照片、各戶別格局',panels:['images'],fields:['photos','plans']},
  {id:'surrounding',label:'周邊機能',hint:'周邊機能、生活分類、位置與聯絡方式',panels:['surrounding','location'],fields:['surroundings','lifestyles','address','reception','map','receptionMap','phone','mapEmbed','facebook','hours']},
- {id:'content',label:'內容區塊',hint:'建案優勢、常見問題、自訂段落',panels:['advantages','faq','blocks'],fields:['advantages','faq','contentBlocks']},
+ {id:'content',label:'內容區塊',hint:'建案優勢、常見問題、自訂段落與自訂章節',panels:['advantages','faq','blocks','custom'],fields:['advantages','faq','contentBlocks','customSections']},
  {id:'template',label:'版型選擇',hint:'詳細頁模板、段落排序與顯示',panels:['layout'],fields:['template','sections']},
  {id:'publish',label:'預覽與發佈',hint:'搜尋資訊、資料來源、預覽後刊登',panels:['geo'],fields:['seoTitle','seoDescription','source','verifiedOn','status','sheet','email','contact','publishedAt','updatedAt']},
 ];
 
-export const fieldLabels:Partial<Record<keyof Project,string>>={id:'建案編號',name:'案名',builder:'建商',city:'縣市',district:'行政區',rooms:'房型',area:'全案坪數',stage:'建案階段',type:'建築類型',sales:'銷售狀態',slogan:'標語',feature:'特色介紹',description:'建案介紹',price:'價格',facts:'基本資料欄位',roomTypes:'房型分類',photos:'照片',plans:'格局資料',surroundings:'周邊機能',lifestyles:'生活分類',address:'基地位置',reception:'接待會館位置',map:'基地導航連結',receptionMap:'接待中心導航連結',phone:'電話諮詢號碼',mapEmbed:'Google 地圖嵌入網址',facebook:'建案 Facebook 網址',hours:'服務時間',advantages:'建案優勢',faq:'常見問題',contentBlocks:'新增段落',template:'詳細頁模板',sections:'段落排序與顯示',seoTitle:'搜尋標題',seoDescription:'搜尋摘要',source:'資料來源',verifiedOn:'資料確認日期',status:'刊登狀態',sheet:'本案 Google Sheets 網址',email:'通知 Email',contact:'銷售窗口名稱',publishedAt:'刊登日期',updatedAt:'更新時間'};
+export const fieldLabels:Partial<Record<keyof Project,string>>={id:'建案編號',name:'案名',builder:'建商',city:'縣市',district:'行政區',rooms:'房型',area:'全案坪數',stage:'建案階段',type:'建築類型',sales:'銷售狀態',slogan:'標語',feature:'特色介紹',description:'建案介紹',price:'價格',facts:'基本資料欄位',roomTypes:'房型分類',photos:'照片',plans:'格局資料',surroundings:'周邊機能',lifestyles:'生活分類',address:'基地位置',reception:'接待會館位置',map:'基地導航連結',receptionMap:'接待中心導航連結',phone:'電話諮詢號碼',mapEmbed:'Google 地圖嵌入網址',facebook:'建案 Facebook 網址',hours:'服務時間',advantages:'建案優勢',faq:'常見問題',contentBlocks:'新增段落',customSections:'自訂章節',template:'詳細頁模板',sections:'段落排序與顯示',seoTitle:'搜尋標題',seoDescription:'搜尋摘要',source:'資料來源',verifiedOn:'資料確認日期',status:'刊登狀態',sheet:'本案 Google Sheets 網址',email:'通知 Email',contact:'銷售窗口名稱',publishedAt:'刊登日期',updatedAt:'更新時間'};
 
 export type WizardError={field:string;message:string};
 const label=(f:string)=>fieldLabels[f as keyof Project]||f;

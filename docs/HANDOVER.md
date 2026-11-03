@@ -1,6 +1,13 @@
 # DUA+ 技術移轉手冊（HANDOVER）
 
-> 狀態截至：2026-11-03，第 4 批（後台建案精靈）完成後。第 3 批為建案詳細頁模板；第 2 批為首頁資訊架構＋ /projects 改版；第 1 批為聯絡我們／洽詢名單／隱私權政策／關於我們併入刊登合作。
+> 狀態截至：2026-11-04，第 5 批（開場只播一次、詳細頁細修、自訂章節）完成後。第 4 批為後台建案精靈；第 3 批為建案詳細頁模板；第 2 批為首頁資訊架構＋ /projects 改版；第 1 批為聯絡我們／洽詢名單／隱私權政策／關於我們併入刊登合作。
+>
+> **第 5 批變更摘要（開場動畫、首頁角色、詳細頁細修、自訂章節）**
+> - 開場動畫：**每個瀏覽階段（分頁）只播一次**（`sessionStorage` 旗標 `dua:intro-played`，邏輯在 `lib/intro.ts`）。`PageLoadingOverlay` 從 `Header` 移到 `app/layout.tsx`，換頁不會重新掛載；`<head>` 內嵌小腳本在首次繪製前替 `<html>` 加上 `dua-intro-played`，CSS 直接隱藏，重新整理／再次進站不會閃一下。點一下（或按 Esc）即可略過（200ms 淡出）。減少動態效果：靜態畫面約 1.2 秒後消失（修正：`styles/base.css` 全域 reduced-motion 規則原本會讓它一開始就消失）。run-cycle 替換點不變（`components/loading-scene.tsx`）。
+> - 首頁 Q&A 角色換成雙人圖 `/assets/characters/dua.5.png`（靜態，無循環動畫）。
+> - 建案詳細頁（三模板共用）：行政區圖上方的案名／地區標籤會依長度縮字並在框內換行（`components/district-map.tsx` 的 `labelFit()`）；5 大優勢改為真正可選取的 HTML（`ol > li > h3 + p`，不再包在按鈕內），並寫入 JSON-LD `amenityFeature`；每個戶別可填「本戶格局說明」，有填才在格局下方顯示「PLAN NOTE」卡片，沒填不留空白；位置章節開放預約時標題改為「預約賞屋」，表單與地圖桌機並排（頂端與高度對齊）、手機上下堆疊；「基地位置」「接待中心地址」一律上下各一列，長地址完整換行。
+> - **自訂章節**：專案 JSON 新增選填欄位 `customSections`（`{id, after, visible, title, text, image, caption}`，最多 12 個；`lib/custom-sections.ts`），舊資料沒有此欄位視為空陣列，**不需 migration**。後台「自訂章節」分頁（精靈第 4 步「內容區塊」也有；`components/admin-custom-sections.tsx`）可新增、上移／下移（到章節邊界時自動移到相鄰章節之後）、改標題／內容／圖片、隱藏、刪除。前台在指定主要章節（基本資料／格局／周邊機能／位置）之後顯示，三模板各有樣式；隱藏的章節不會送到前台。
+> - 種子：新增 `seed/60-batch5.sql`；測試：新增 `tests/batch5.mjs`，`tests/apricot-detail.mjs` 改為檢查 `ol/li` 結構。
 >
 > **第 4 批變更摘要（後台建案精靈＋頁尾修正）**
 > - 後台「新增建案／編輯建案」改為 6 步驟精靈：**01 基本資料 → 02 照片與格局 → 03 周邊機能（含位置）→ 04 內容區塊（優勢、FAQ、新增段落）→ 05 版型選擇（模板＋段落排序）→ 06 預覽與發佈（搜尋資訊、資料來源、發佈前檢查）**。步驟列可點選、上一步／下一步、任何一步都能「儲存草稿」、沿用「預覽目前編輯」。右上「進階／全部欄位」切回原本 9 個分頁（所有欄位都在），「回到逐步填寫」再切回精靈。
@@ -128,6 +135,7 @@ pnpm dev                         # http://localhost:5173 ，後台 /admin/login
 | `seed/30-home-settings.sql` | 首頁設定（`settings` key=`home`）：預設預算級距＋「精選與廣告」示範——橫幅＝編輯精選（連到星峠）、方形 1＝廣告（連到 /partner）、方形 2 留空以顯示「廣告版位招募中」。**會覆蓋本機後台已存的首頁設定**；清除：`DELETE FROM settings WHERE key='home'` |
 | `seed/40-project-templates.sql` | 第 3 批：用 `json_set` 只改 5 個建案的 `template` 欄位——星峠＝經典、青田晴光／台中光＝圖像、板橋悅森居／高雄和樂＝簡約。不動其他內容；建案不存在時不新增。還原預設：`UPDATE projects SET data=json_remove(data,'$.template')` |
 | `seed/50-admin-wizard.sql` | 第 4 批：1 筆虛構**草稿**建案 `demo-wizard-draft`（「範例草稿・青田小日子（精靈示範）」，status=draft，前台不顯示、詳細頁 404）。只填第 1 步＋1 張封面照，用來示範在精靈接續第 2～6 步。固定 id、`INSERT OR REPLACE`，只動這一筆；重跑會把它還原成草稿。清除：`DELETE FROM projects WHERE id=demo-wizard-draft` |
+| `seed/60-batch5.sql` | 第 5 批：只用 `json_set` 改示範建案——光之丘 D2、悅森居 C1 的格局說明（其他戶別留空以確認版面收合）；光之丘 3 個自訂章節（基本資料之後有圖、位置之後純文字、1 個隱藏）、悅森居 1 個（格局之後有圖）。不動星峠真實內容；長名稱標籤用 00 內既有的「七期光之丘（示範）」「鳳山和樂透天（示範）」。清除：`UPDATE projects SET data=json_remove(data,'$.customSections') WHERE id IN ('demo-taichung-hikari','demo-newtaipei-yuesen')` |
 
 ```sh
 pnpm setup:local          # 先確保資料表存在
@@ -185,7 +193,8 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
   1. **基本資料**：案名、建商、縣市、行政區（案名、縣市、行政區必填才能下一步）、房型、坪數、標語、介紹、建案階段／類型／銷售狀態、價格、基本資料欄位。
   2. **照片與格局**：封面＋輪播照片（第一張為封面）、戶別格局圖。
   3. **周邊機能**：周邊內容區塊與照片、生活分類、基地／接待位置、導航連結、電話、地圖嵌入、FB、服務時間。
-  4. **內容區塊**：建案優勢、常見問題、新增段落（滿版圖、左右圖文、輪播、影片…）。
+  4. **內容區塊**：建案優勢、常見問題、新增段落（滿版圖、左右圖文、輪播、影片…）、**自訂章節**（第 5 批：獨立一整段、有自己的標題，選「放在哪個章節之後」新增；上移／下移、顯示勾選、刪除；圖片可上傳或填 `/assets/...` 路徑；標題／內容／圖片都空白時前台不顯示）。
+     - 第 2 步每個戶別另有「本戶格局說明（選填）」，顯示在前台格局圖下方。
   5. **版型選擇**：詳細頁模板（經典／圖像／簡約）、段落排序／顯示／名稱。
   6. **預覽與發佈**：搜尋標題／摘要、資料來源與確認日期、「發佈前檢查」清單（各步驟是否完成＋刊登條件，可點「前往」跳回該步）。
   - 「下一步」會檢查目前這步；有錯時在上方橘色框列出欄位，不會前進。點步驟列可直接跳步（往後跳時會依序檢查中間步驟）。
@@ -234,7 +243,7 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 - **正式 D1 尚未套用 `0001_inquiries`**：部署時執行 `wrangler d1 migrations apply dua-plus-db --remote`。
 - **Google 端**：公司總表要有「洽詢名單」分頁，Apps Script 要貼新版程式碼並發布新版本（第 8 章）。
 - **尚無自訂網域**：目前只用 workers.dev 網址。接上網域後要更新 `DUA_SITE_ORIGIN` 並重新部署。另外 `app/sitemap.ts`、`app/robots.ts` 目前寫死舊的 `https://dua-plus-platform.userforall.chatgpt.site`，要一併改成正式網域。
-- **角色跑步動畫圖待補**：載入畫面（`components/page-loading-overlay.tsx`、`components/dua-loading.tsx`）保留了替換點，等 run-cycle 圖稿到位再換上。
+- **角色跑步動畫圖待補**：開場畫面（`app/layout.tsx` 掛載的 `components/page-loading-overlay.tsx`，場景在 `components/loading-scene.tsx`）保留了替換點，等 run-cycle 圖稿到位再換上。開場每個瀏覽階段只播一次；要重看請關閉分頁或在 DevTools 清掉 `sessionStorage` 的 `dua:intro-played`。
 - **隱私權政策需法務審閱**：`lib/privacy.ts` 目前逐字照原稿（含疑似錯字「蒐集著」「導至」），版本 `privacy-2026-11`；修改文字時一併更新版本號。
 - Sheets 沒有自動重送排程，pending 名單需人工到 `/admin/sheets` 補送。
 - 忘記密碼寄信（Resend）尚未實際設定與端到端驗證。

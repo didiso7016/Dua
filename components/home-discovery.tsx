@@ -59,7 +59,7 @@ export function HomeFinder({projects,budgets}:{projects:DiscoveryProject[];budge
  if(returning)return <section className="hf" id="home-finder" aria-labelledby="hf-title">
   <div className="hf__inner"><FinderHeading/>
    <div className="hf-card hf-card--resume">
-    <img className="hf-resume__char" src="/assets/duo.png" alt="" width={120} height={150} decoding="async"/>
+    <img className="hf-resume__char" src="/assets/characters/dua.5.png" alt="" width={395} height={225} decoding="async"/>
     <span className="hf-eyebrow" lang="en">WELCOME BACK</span>
     <h3 className="hf-resume__title">接著找<strong>你的下一個家</strong></h3>
     <p className="hf-resume__lead">上次的找房方向已為你保留 <span aria-hidden="true">(^ᴗ^)/</span></p>
@@ -78,7 +78,7 @@ export function HomeFinder({projects,budgets}:{projects:DiscoveryProject[];budge
     </div>
     <div className="hf-question" key={step}>
      <div className="hf-conversation">
-      <img className="hf-char" src="/assets/duo.png" alt="DUA+ 角色陪你找家" width={98} height={128} decoding="async"/>
+      <img className="hf-char" src="/assets/characters/dua.5.png" alt="DUA+ 雙人角色陪你找家" width={395} height={225} decoding="async"/>
       <div className="hf-speech">
        <span className="hf-kaomoji" key={mood} aria-hidden="true">{mood}</span>
        <h3 ref={title} tabIndex={-1} className="hf-ask"><span>{q.lead}</span><strong>{q.ask}</strong></h3>

@@ -182,3 +182,64 @@ body:has(.admin-root) .admin-inquiry-type--general { background: var(--dua-laven
 body:has(.admin-root) .admin-inquiry-type--partner { background: var(--dua-yellow-soft); }
 body:has(.admin-root) .admin-sheet-status--sent { background: var(--dua-grass-soft); color: var(--dua-grass-ink); }
 body:has(.admin-root) .admin-sheet-status--pending { background: var(--dua-orange-soft); color: var(--dua-orange-ink); }
+
+/* ===================================================== 4. 詳細頁模板選擇 (components/admin-project-template.tsx) */
+body:has(.admin-root) .admin-template-options {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+@media (min-width: 1024px) {
+  body:has(.admin-root) .admin-template-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+body:has(.admin-root) .admin-template-option {
+  position: relative;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  border: 1px solid var(--dua-admin-line);
+  border-radius: var(--dua-radius-md);
+  background: var(--dua-surface);
+  cursor: pointer;
+}
+body:has(.admin-root) .admin-template-option.is-selected { border-color: var(--dua-ink); box-shadow: 0 0 0 1px var(--dua-ink); }
+body:has(.admin-root) .admin-template-option:has(input:focus-visible) { outline: 3px solid var(--dua-red); outline-offset: 2px; }
+body:has(.admin-root) .admin-template-option input {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--dua-red);
+}
+body:has(.admin-root) .admin-template-text { display: grid; gap: 4px; padding-right: 22px; font-size: 0.875rem; line-height: 1.55; color: var(--dua-ink-2); }
+body:has(.admin-root) .admin-template-text strong { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; color: var(--dua-ink); font-size: 1rem; }
+body:has(.admin-root) .admin-template-text small { color: var(--dua-ink-2); font-size: 0.75rem; font-weight: 600; }
+/* Tiny wireframe of each template (decorative). */
+body:has(.admin-root) .admin-template-thumb {
+  display: grid;
+  gap: 4px;
+  width: 76px;
+  height: 92px;
+  padding: 6px;
+  box-sizing: border-box;
+  border: 1px solid var(--dua-admin-line);
+  border-radius: var(--dua-radius-sm);
+  background: var(--dua-bg);
+}
+body:has(.admin-root) .admin-template-thumb i { display: block; border-radius: 2px; background: var(--dua-admin-fill); border: 1px solid var(--dua-admin-ring); }
+body:has(.admin-root) .thumb-classic { grid-template-rows: 10px 30px 1fr 1fr; }
+body:has(.admin-root) .thumb-classic i:nth-child(2) { background: var(--dua-sky-soft); }
+body:has(.admin-root) .thumb-gallery { grid-template-rows: 38px 12px 1fr 1fr; padding: 0 0 6px; }
+body:has(.admin-root) .thumb-gallery i { margin-inline: 6px; }
+body:has(.admin-root) .thumb-gallery i:first-child { margin: 0; border-radius: 0; background: var(--dua-sky-soft); }
+body:has(.admin-root) .thumb-gallery i:nth-child(2) { margin: -10px 14px 0 6px; background: var(--dua-surface); }
+body:has(.admin-root) .thumb-compact { grid-template-columns: 1fr 1fr; grid-template-rows: 24px 1fr 1fr; }
+body:has(.admin-root) .thumb-compact i:nth-child(2) { background: var(--dua-sky-soft); }
+body:has(.admin-root) .thumb-compact i:nth-child(3),
+body:has(.admin-root) .thumb-compact i:nth-child(4) { grid-column: 1 / -1; background: var(--dua-surface); }

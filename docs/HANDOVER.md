@@ -1,6 +1,13 @@
 # DUA+ 技術移轉手冊（HANDOVER）
 
-> 狀態截至：2026-11-03，第 2 批（首頁資訊架構＋ /projects 改版）完成後。第 1 批為聯絡我們／洽詢名單／隱私權政策／關於我們併入刊登合作。
+> 狀態截至：2026-11-03，第 3 批（建案詳細頁模板）完成後。第 2 批為首頁資訊架構＋ /projects 改版；第 1 批為聯絡我們／洽詢名單／隱私權政策／關於我們併入刊登合作。
+>
+> **第 3 批變更摘要（建案詳細頁模板）**
+> - 建案詳細頁 `/projects/<id>` 有 3 種模板：**經典 classic**（標題在上、框起來的大圖、編號章節＋粗黑分隔線、周邊機能左右交錯）、**圖像 gallery**（滿版大圖、標題卡片壓在照片上、色塊章節、周邊機能照片卡片並排）、**簡約 compact**（左文右圖開場、各段落白色卡片、窄版、周邊機能小圖清單）。三者顯示相同資料與段落（輪播、基本資料＋行政區圖、優勢、格局切換、周邊機能各自照片、影片與新增段落、預約／位置／FAQ、段落錨點、JSON-LD），只改呈現。開場新增彩色貼紙標籤（地區＝天空藍、房型＝草綠、類型＝橘、總價＝黃、生活＝粉紫）。
+> - 資料：專案 JSON 新增**選填**欄位 `template`（`classic`／`gallery`／`compact`），沒有時視為 classic，不需 migration。定義在 `lib/project-templates.ts`，驗證在 `lib/project-schema.ts`。
+> - 元件：`components/project-detail.tsx`（三模板共用結構，`<main class="project-detail pd-<模板>" data-template>`）、後台 `components/admin-project-template.tsx`（「版面設定」分頁最上方的模板單選卡片；「預覽目前編輯」即時套用）。捲動進場動畫 `DetailMotion` 已移除（效能）。
+> - 樣式：新增 `styles/project-detail.css`（三模板＋輪播、格局、行政區圖、預約表單、影片、手機預約列）。`app/globals.css` 內舊的 jp-／clean-／apricot-／polished-detail 詳細頁樣式層已全部移除（58KB → 11KB，只剩 shadcn 主題變數與後台舊樣式）；`docs/apricot-detail.md` 描述的是舊樣式，僅供歷史參考。
+> - 種子：新增 `seed/40-project-templates.sql`；測試：新增 `tests/project-templates.mjs`。
 >
 > **第 2 批變更摘要**
 > - 首頁由上而下：Hero → 最新消息列（編輯精選標題，有才顯示）→ 開始找房 Q&A（5 題：地區 → 預算 → 房型 → 類型 → 生活需求）→ 最新建案（最多 6）→ 熱門區塊（排除已在最新建案出現者，沒有剩下就隱藏）→ 精選與廣告（1 橫幅＋2 方形）。
@@ -45,7 +52,7 @@ D1 資料表：
 | `lib/` | 資料模型、驗證（zod）、搜尋邏輯（`discovery*.ts`）、Sheets 串接（`sheet-delivery.ts`、`google-sheet-script.ts`）、隱私權文字（`privacy.ts`）、帳號（`account-auth.ts`、`password.ts`） |
 | `db/`、`drizzle/` | Drizzle schema 與 D1 migration（`0000_…`、`0001_inquiries.sql`，meta 在 `drizzle/meta/`） |
 | `seed/` | 本機種子資料 SQL（第 5 章） |
-| `styles/` | 設計系統：tokens、base、components、site-chrome、home-hero、home（首頁 Q&A／區塊／建案卡片）、listing（/projects）、contact、page-loading、admin（由 `styles/dua.css` 匯入）。`app/globals.css` 只剩 shadcn 主題變數與建案詳細頁、後台的舊樣式 |
+| `styles/` | 設計系統：tokens、base、components、site-chrome、home-hero、home（首頁 Q&A／區塊／建案卡片）、listing（/projects）、contact、page-loading、admin（由 `styles/dua.css` 匯入）。project-detail（建案詳細頁三模板）。`app/globals.css` 只剩 shadcn 主題變數與後台的舊樣式 |
 | `public/` | 靜態素材；`public/assets/characters` 角色圖；`public/assets/demo/*.jpg` 建案示範照片（已提交） |
 | `worker/` | Worker 進入點 |
 | `scripts/` | `local-setup.mjs`（本機初始化）、`seed-local.mjs`（種子資料）、`run-tests.mjs`（測試） |
@@ -112,6 +119,7 @@ pnpm dev                         # http://localhost:5173 ，後台 /admin/login
 | `seed/10-inquiries.sql` | 8 筆虛構洽詢（一般／合作混合；已寫入、待補送、多次失敗等狀態；電話 0900-000-001～008；consent_version `privacy-2026-11`） |
 | `seed/20-bookings.sql` | 4 筆虛構賞屋預約，分屬既有建案（sent／pending 混合） |
 | `seed/30-home-settings.sql` | 首頁設定（`settings` key=`home`）：預設預算級距＋「精選與廣告」示範——橫幅＝編輯精選（連到星峠）、方形 1＝廣告（連到 /partner）、方形 2 留空以顯示「廣告版位招募中」。**會覆蓋本機後台已存的首頁設定**；清除：`DELETE FROM settings WHERE key='home'` |
+| `seed/40-project-templates.sql` | 第 3 批：用 `json_set` 只改 5 個建案的 `template` 欄位——星峠＝經典、青田晴光／台中光＝圖像、板橋悅森居／高雄和樂＝簡約。不動其他內容；建案不存在時不新增。還原預設：`UPDATE projects SET data=json_remove(data,'$.template')` |
 
 ```sh
 pnpm setup:local          # 先確保資料表存在
@@ -165,7 +173,7 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 | `/admin/forgot`、`/admin/reset` | 忘記密碼／重設（需設定 Resend，見第 4 章） |
 | `/admin-preview/[screen]` | 後台畫面預覽頁（開發用） |
 
-- **建案管理**：每個建案可編輯 基本資料、照片與格局、周邊機能、位置、常見問題、搜尋與資料來源（SEO／GEO）、建案優勢、新增段落、版面設定（各區塊顯示／隱藏、預約區塊開關）。狀態 published 才會出現在前台。照片上傳需要 R2（正式站目前無法上傳，可填 `/assets/...` 靜態路徑）。
+- **建案管理**：每個建案可編輯 基本資料、照片與格局、周邊機能、位置、常見問題、搜尋與資料來源（SEO／GEO）、建案優勢、新增段落、版面設定（**詳細頁模板**：經典／圖像／簡約，第 3 批；各區塊顯示／隱藏、排序、名稱、預約區塊開關）。狀態 published 才會出現在前台。照片上傳需要 R2（正式站目前無法上傳，可填 `/assets/...` 靜態路徑）。
 - **洽詢名單**（第 1 批新增）：切換 全部／一般洽詢／合作洽詢（含筆數），顯示時間（台北）、類型、姓名、電話／Email 連結、公司、內容、來源頁、試算表狀態（已寫入／待補送＋嘗試次數），待補送可連到 `/admin/sheets` 補送。沒有 CSV 匯出。
 - **名單接收設定**：公司名單總表、各建案專用表網址；串接細節在 `/admin/sheets`。
 - **平台資訊**：公司名稱、電話、Email、地址、FB／IG，前台 Footer 與 `/contact` 共用。

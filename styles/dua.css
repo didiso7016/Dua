@@ -11,5 +11,6 @@
 @import "./home.css"; /* homepage Q&A + sections, shared project card / rail / select */
 @import "./listing.css"; /* /projects list */
 @import "./contact.css"; /* inquiry form/popup, /contact, /privacy, /partner */
+@import "./project-detail.css"; /* /projects/<id> detail templates (batch 3) */
 @import "./page-loading.css"; /* TEMPORARY loading preview (2026-11) */
 @import "./admin.css";

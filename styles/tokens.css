@@ -142,7 +142,7 @@
   --dua-gutter: var(--dua-space-4);
   /* Sticky public header height; anchors scroll below it (html scroll-padding-top). */
   --dua-header-h: 64px;
-  /* Extra lift for floating buttons (back-to-top), e.g. a future contact button below it. */
+  /* Extra lift for back-to-top so it stacks above the 「洽詢」 FAB (set to 60px in site-chrome.css when the FAB exists). */
   --dua-fab-offset: 0px;
 }
 

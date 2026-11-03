@@ -1,1 +1,3 @@
-import {Header,Footer} from '@/components/site';import {getSettings} from '@/lib/storage';export const dynamic='force-dynamic';export const metadata={title:'關於我們'};export default async function Page(){const s=await getSettings();return <><Header/><main className="container"><section className="panel"><h1>關於 DUA+</h1><p>由築里整合行銷有限公司經營的建案導覽平台，整合不同建商與地區的建案資訊，協助你看懂房型、格局與周邊生活。</p><a className="action" href="/projects">開始找建案</a></section></main><Footer settings={s}/></>}
+import {permanentRedirect} from 'next/navigation';
+// 「關於我們」已併入刊登合作頁的公司介紹段落。主要轉址在 next.config.ts（308）；此頁僅作為備援。
+export default function Page(){permanentRedirect('/partner#about')}

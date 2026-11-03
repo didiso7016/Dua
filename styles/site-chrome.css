@@ -363,9 +363,55 @@ html:has(.dua-header:not(.dua-header--compact)) { --dua-header-h: 70px; }
   .dua-footer__house { width: 64px; }
 }
 
+/* Bottom row: 刊登合作／聯絡我們／隱私權政策 + copyright. */
+.dua-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--dua-space-4);
+  max-width: var(--dua-container);
+  margin: var(--dua-space-3) auto 0;
+  padding-top: var(--dua-space-2);
+  border-top: var(--dua-line-thin) dashed color-mix(in srgb, var(--dua-ink) 35%, transparent);
+}
+
+.dua-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--dua-space-4);
+}
+
+.dua-footer__links > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  border-radius: var(--dua-radius-sm);
+  font-size: var(--dua-text-sm);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: var(--dua-line-thin);
+  text-underline-offset: 0.25em;
+}
+
+.dua-footer__links > a:hover { text-decoration-color: var(--dua-red); }
+
+.dua-footer__copy {
+  margin: 0;
+  color: var(--dua-ink-2);
+  font-family: var(--dua-font-en);
+  font-size: var(--dua-text-xs);
+  letter-spacing: 0.04em;
+}
+
+@media (min-width: 1440px) {
+  .dua-footer__bottom { max-width: calc(var(--dua-container) + 160px); }
+}
+
 /* ============================================================ Back to top */
 /* components/back-to-top.tsx — rendered once by Footer on every public page.
-   --dua-fab-offset leaves room for a future floating contact button. */
+   --dua-fab-offset lifts it above the floating 洽詢 button (see "Inquiry FAB" below). */
 .dua-back-to-top {
   position: fixed;
   right: calc(16px + env(safe-area-inset-right));
@@ -433,3 +479,76 @@ body:has(.mobile-booking:not([hidden])) .dua-back-to-top {
 
 /* Hidden when a dialog (gallery lightbox etc.) is open, like the booking bar. */
 body:has([role="dialog"]) .dua-back-to-top { display: none; }
+
+/* ============================================================ Inquiry FAB */
+/* components/inquiry.tsx (InquiryLauncher) — the 「洽詢」 pill sits in the bottom-right slot and
+   back-to-top stacks directly above it: 48px button + 12px gap = --dua-fab-offset.
+   Both lift together above the fixed mobile booking bar on project pages (≤580px). */
+body:has(.dua-inquiry-fab) { --dua-fab-offset: 60px; }
+
+.dua-inquiry-fab {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right));
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 35;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 48px;
+  min-width: 48px;
+  margin: 0;
+  padding: 0 18px 0 14px;
+  border: var(--dua-border);
+  border-radius: var(--dua-radius-pill);
+  background: var(--dua-red);
+  color: var(--dua-on-red);
+  box-shadow: var(--dua-shadow);
+  font-family: var(--dua-font-sans);
+  font-size: var(--dua-text-base);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dua-dur-fast) var(--dua-ease-out);
+}
+
+.dua-inquiry-fab:hover {
+  color: var(--dua-on-red);
+  transform: translate(-1px, -2px);
+  box-shadow: var(--dua-shadow-hover);
+}
+
+.dua-inquiry-fab:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.dua-inquiry-fab svg { display: block; flex-shrink: 0; }
+
+body:has(.mobile-booking:not([hidden])) .dua-inquiry-fab {
+  bottom: calc(82px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 581px) {
+  body:has(.mobile-booking:not([hidden])) .dua-inquiry-fab {
+    bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (min-width: 1024px) {
+  .dua-inquiry-fab,
+  body:has(.mobile-booking:not([hidden])) .dua-inquiry-fab {
+    right: calc(24px + env(safe-area-inset-right));
+    bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+}
+
+body:has([role="dialog"]) .dua-inquiry-fab { display: none; }
+
+@media print {
+  .dua-inquiry-fab,
+  .dua-back-to-top { display: none; }
+}

@@ -1,1 +1,1 @@
-export default function robots(){return {rules:{userAgent:'*',allow:'/',disallow:['/admin','/admin-preview/','/api/admin/','/api/auth/','/api/bookings','/design-system']},sitemap:'https://dua-plus-platform.userforall.chatgpt.site/sitemap.xml'}}
+export default function robots(){return {rules:{userAgent:'*',allow:'/',disallow:['/admin','/admin-preview/','/api/admin/','/api/auth/','/api/bookings','/api/inquiries','/design-system']},sitemap:'https://dua-plus-platform.userforall.chatgpt.site/sitemap.xml'}}

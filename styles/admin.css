@@ -156,3 +156,29 @@ body:has(.admin-root) [data-sidebar="trigger"]:hover { background: var(--dua-adm
 @media (prefers-reduced-motion: reduce) {
   body:has(.admin-root) [data-sidebar="menu-button"] { transition: none; }
 }
+
+/* ===================================================== 3. 洽詢名單 (components/admin-inquiries.tsx) */
+body:has(.admin-root) .admin-inquiries__scroll { overflow-x: auto; }
+body:has(.admin-root) .admin-inquiries__nowrap { white-space: nowrap; }
+body:has(.admin-root) .admin-inquiries__message {
+  min-width: 16rem;
+  max-width: 28rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+body:has(.admin-root) :is(.admin-inquiry-type, .admin-sheet-status) {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--dua-admin-line);
+  border-radius: var(--dua-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+body:has(.admin-root) .admin-inquiry-type--general { background: var(--dua-lavender-soft); }
+body:has(.admin-root) .admin-inquiry-type--partner { background: var(--dua-yellow-soft); }
+body:has(.admin-root) .admin-sheet-status--sent { background: var(--dua-grass-soft); color: var(--dua-grass-ink); }
+body:has(.admin-root) .admin-sheet-status--pending { background: var(--dua-orange-soft); color: var(--dua-orange-ink); }

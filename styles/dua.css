@@ -1,7 +1,7 @@
 /*
  * DUA+ design system entry point.
  * Imported from app/layout.tsx AFTER ./globals.css so these rules win.
- * Order matters: tokens ??base ??components ??site chrome ??page sections ??admin reset.
+ * Order matters: tokens → base → components → site chrome → page sections → admin reset.
  */
 @import "./tokens.css";
 @import "./base.css";
@@ -9,5 +9,6 @@
 @import "./site-chrome.css";
 @import "./home-hero.css";
 @import "./hero-props.css"; /* autonomous construction props + character idle */
+@import "./contact.css"; /* inquiry form/popup, /contact, /privacy, /partner */
 @import "./page-loading.css"; /* TEMPORARY loading preview (2026-11) */
 @import "./admin.css";

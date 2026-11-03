@@ -10,6 +10,8 @@ Google Drive 連線只供本次建立試算表，並未授予網站持續寫入�
 - 星峠專用表：`1gTzmRvTaEN-E1_oNiNpyzhSrRgM9FIRgQ9J_XD5bg20`
 - 分頁：`預約名單`，標題列為預約編號、填寫時間、建案名稱、姓名、聯絡電話、希望賞屋日期、希望時段、備註。
 
+洽詢表單（/contact、全站洽詢彈窗）另寫入公司總表的 `洽詢名單` 分頁（action `inquiry`），設定與重新部署步驟見 docs/sheets-inquiries.md。
+
 公司及星峠在後台未指定表格網址時使用上述預設；填入其他網址時採用後台指定網址。Google 端 ALLOWED 清單也需加入其 ID 並更新部署。不得以總表替代其他建案的專用表。
 
 提交先 INSERT OR IGNORE 保存預約，再取得 60 秒租約寫入 Google。兩份表均回報相同預約編號及成功才標為 sent。失敗仍保留於資料庫。Google 以 ScriptLock 與預約編號比對防止重複；總表成功但專用表失敗時，補送不會再次新增總表。日期使用實際 Date，時間區域為 Asia/Taipei；電話作為文字。可能的公式文字會轉為純文字。

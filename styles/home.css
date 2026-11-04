@@ -267,31 +267,6 @@
 }
 
 /* ============================================================ News strip */
-.hs-news { border-bottom: var(--dua-border); background: var(--dua-yellow); }
-.hs-news__inner {
-  box-sizing: border-box;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--dua-space-2) var(--dua-space-4);
-  max-width: calc(var(--dua-container) + var(--dua-gutter) * 2);
-  margin-inline: auto;
-  padding: var(--dua-space-3) var(--dua-gutter);
-}
-.hs-news__tag {
-  flex-shrink: 0;
-  padding: 2px 12px;
-  border: var(--dua-line-thin) solid var(--dua-ink);
-  border-radius: var(--dua-radius-pill);
-  background: var(--dua-red);
-  color: var(--dua-on-red);
-  font-size: var(--dua-text-xs);
-  font-weight: 700;
-  transform: rotate(-3deg);
-}
-.hs-news__links { display: flex; flex-wrap: wrap; gap: var(--dua-space-1) var(--dua-space-5); min-width: 0; }
-.hs-news__links a { font-size: var(--dua-text-sm); font-weight: 700; text-decoration: none; }
-.hs-news__links a:hover { text-decoration: underline; }
 
 /* ============================================================ Ad slots */
 .hs-ads {

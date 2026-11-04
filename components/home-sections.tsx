@@ -1,5 +1,5 @@
 /**
- * 首頁 Q&A 之後的區塊（server component）：最新建案、熱門區塊、精選與廣告、最新消息。樣式：styles/home.css（.hs-*）。
+ * 首頁 Q&A 之後的區塊（server component）：最新建案、熱門區塊、精選與廣告（第 6 批移除「最新消息」列）。樣式：styles/home.css（.hs-*）。
  * 廣告版位內容來自首頁設定 banners（後台「首頁管理」）；空位顯示「廣告版位招募中」並連到 /partner。
  */
 import type {ReactNode} from 'react';
@@ -15,7 +15,7 @@ function Head({id,eyebrow,title,accent,lead,action}:{id:string;eyebrow:string;ti
 
 export function HomeLatest({projects}:{projects:DiscoveryProject[]}){
  return <section className="hs hs--latest" aria-labelledby="hs-latest-title"><div className="hs__inner">
-  <Head id="hs-latest-title" eyebrow="NEW ARRIVALS" title="最新" accent="建案" lead="依首次刊登時間排序，最多 6 個。" action={<a className="dua-btn dua-btn--secondary dua-btn--sm hs-all" href="/projects?all=1">看全部建案 ↗</a>}/>
+  <Head id="hs-latest-title" eyebrow="NEW ARRIVALS" title="最新" accent="建案" action={<a className="dua-btn dua-btn--secondary dua-btn--sm hs-all" href="/projects?all=1">看全部建案 ↗</a>}/>
   <HomeProjectRail projects={projects} label="最新刊登建案"/>
  </div></section>
 }
@@ -39,9 +39,4 @@ export function HomeAds({banners}:{banners:Banner[]}){
   <Head id="hs-ads-title" eyebrow="FEATURED & ADS" title="精選與" accent="廣告"/>
   <div className="hs-ads"><AdSlot banner={wide} shape="wide"/><AdSlot banner={squares[0]} shape="square"/><AdSlot banner={squares[1]} shape="square"/></div>
  </div></section>
-}
-
-export function HomeNews({banners}:{banners:Banner[]}){
- const news=banners.filter(b=>b.kind==='editorial');if(!news.length)return null;
- return <aside className="hs-news" aria-label="最新消息"><div className="hs-news__inner"><span className="hs-news__tag">最新消息</span><div className="hs-news__links">{news.map(b=><a key={b.id} href={b.url} {...external(b.url)}>{b.title} ↗</a>)}</div></div></aside>
 }

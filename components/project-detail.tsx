@@ -1,7 +1,7 @@
 import {ViewTracker} from './view-tracker';
 import {visibleBasicFacts} from '@/lib/basic-facts';
 import {ProjectVisit} from './project-visit';
-import {Advantages} from './project-motion';
+import {Advantages,DetailReveal} from './project-motion';
 import {Fragment} from 'react';
 import type {Project,Settings} from '@/lib/model';
 import {DetailNavigation,MobileBooking} from './detail-navigation';
@@ -27,6 +27,10 @@ function OpeningChips({project:p}:{project:Project}){
 
 export function ProjectDetail({project:p,settings:s,preview=false}:{project:Project;settings:Settings;preview?:boolean}){
  const template=templateOf(p.template);
+ // 第 6 批：經典模板開場＝滿版輪播＋下方資訊列（地區・銷售狀態／案名／標語／房型・坪數・類型）。
+ const classic=template==='classic';
+ const meta=[[p.city,p.district].filter(Boolean).join(''),p.sales].filter(Boolean).join(' · ');
+ const specs=[p.rooms,p.area,[p.stage,p.type].filter(Boolean).join('・')].map(x=>(x||'').trim()).filter(Boolean);
  const visible=(key:string)=>p.sections.some(x=>x.key===key&&x.visible);
  const booking=visible('appointment');
  const labels:Record<string,string>={basic:'基本資料',plan:'格局',surrounding:'周邊機能',location:'位置',faq:'常見問題',appointment:'預約賞屋'};
@@ -41,7 +45,7 @@ export function ProjectDetail({project:p,settings:s,preview=false}:{project:Proj
  return <><Header compact/><main id="project-top" data-template={template} className={'project-detail pd-'+template+(booking?' has-booking':'')}>
  <header className={'pd-opening'+(p.photos.length?' has-photos':' no-photos')}>
   <div className="pd-opening-bar"><a href="/projects">← 返回建案列表</a>{booking&&<a href="#appointment">預約賞屋 ↗</a>}</div>
-  <div className="pd-opening-title"><span className="pd-eyebrow">DUA+ ／ PROJECT GUIDE</span><h1>{p.name}</h1>{p.slogan&&<p className="pd-slogan">{p.slogan}</p>}<OpeningChips project={p}/></div>
+  <div className="pd-opening-title"><span className="pd-eyebrow">DUA+ ／ PROJECT GUIDE</span>{classic&&meta&&<p className="pd-meta">{meta}</p>}<h1>{p.name}</h1>{p.slogan&&<p className="pd-slogan">{p.slogan}</p>}{classic&&specs.length>0&&<ul className="pd-specs" aria-label="建案規格">{specs.map(x=><li key={x}>{x}</li>)}</ul>}<OpeningChips project={p}/></div>
   {p.photos.length>0&&<div className="pd-opening-photo"><DetailGallery photos={p.photos} label={p.name+'建案照片'} hero fullBleed/></div>}
  </header>
  {!preview&&<ViewTracker projectId={p.id}/>}<DetailNavigation items={orderedKeys.map(key=>({key,label:labels[key]}))}/>
@@ -51,5 +55,5 @@ export function ProjectDetail({project:p,settings:s,preview=false}:{project:Proj
  {p.sections.find(section=>section.key===key)?.mode==='blocks'?null:key==='plan'?<PlanGallery plans={p.plans}/>:key==='surrounding'?<div className={'pd-neighborhood count-'+Math.min(p.surroundings.length,3)}>{p.surroundings.length?p.surroundings.map((item,i)=><article className={'pd-life'+(i%2?' reverse':'')+(item.photos.length?'':' text-only')} key={i}>{item.photos.length>0&&<div className="pd-life-visual"><DetailGallery photos={item.photos} label={item.title+'照片'}/></div>}<div className="pd-life-copy"><span className="pd-kicker">LIFE SCENE ／ {String(i+1).padStart(2,'0')}</span><h3>{item.title}</h3><p className="text-block">{item.text}</p></div></article>):<p className="pd-empty">周邊機能資料待補。</p>}</div>:<><ProjectVisit project={p} showLocation={visible('location')} showBooking={booking} bookingLabel={labels.appointment} preview={preview}/>{visible('faq')&&<div className="pd-faq"><h3>{labels.faq}</h3>{p.faq.length?p.faq.map((f,i)=><details key={i}><summary>{f.question}</summary><p>{f.answer}</p></details>):<p className="pd-empty">常見問題待補。</p>}</div>}</>}
  </>}
  </div></section><ProjectBlocks blocks={p.contentBlocks||[]} chapter={key}/>{key==='basic'&&<Advantages items={p.advantages||[]}/>}<CustomSections sections={p.customSections} after={key} present={orderedKeys} isLast={index===orderedKeys.length-1}/></Fragment>)}
- </div>{!preview&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jsonld).replace(/</g,'\\u003c')}}/>}</main><Footer settings={s}/>{booking&&<MobileBooking/>}</>
+ </div>{classic&&<DetailReveal/>}{!preview&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jsonld).replace(/</g,'\\u003c')}}/>}</main><Footer settings={s}/>{booking&&<MobileBooking/>}</>
 }

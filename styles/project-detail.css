@@ -2,11 +2,11 @@
  * 建案詳細頁 /projects/<id>（第 3 批：詳細頁模板）
  * ---------------------------------------------------------------------------
  * 結構在 components/project-detail.tsx，三個模板共用同一份 DOM：
- *   .pd-classic  經典：標題在上、框起來的大圖；編號章節＋粗黑分隔線；周邊機能左右交錯。
+ *   .pd-classic  經典（第 6 批改版）：滿版首圖輪播＋下方資訊列；細線、色帶章節；周邊機能左右交錯；捲動進場。
  *   .pd-gallery  圖像：滿版大圖、標題卡片壓在照片上；色塊章節；周邊機能照片卡片並排。
  *   .pd-compact  簡約：左文右圖開場；章節收進白色卡片、版面較窄；周邊機能小圖清單。
  * 取代舊的 jp- / clean- / apricot- / polished-detail 樣式層（已自 app/globals.css 移除）。
- * 只做一次性的使用者操作回饋（chip ✓ 貼紙），沒有捲動進場或循環動畫。
+ * 一次性的使用者操作回饋（chip ✓ 貼紙）；經典模板另有一次性捲動進場（opacity/transform），沒有循環動畫。
  * 斷點：640 / 1024 / 1440px。
  */
 
@@ -585,27 +585,6 @@
 .video-cover > span:last-child { color: var(--dua-ink-2); font-size: var(--dua-text-sm); }
 
 /* =====================================================================
- * Template 1 — 經典 classic
- * ===================================================================== */
-.pd-classic .pd-opening-title { padding-top: var(--dua-space-6); }
-.pd-classic .pd-chapter + .pd-chapter,
-.pd-classic .project-extra-content + .pd-chapter { border-top: var(--dua-border); }
-.pd-classic .pd-chapter--plan,
-.pd-classic .pd-chapter--location { background: var(--dua-surface); }
-.pd-classic .pd-life { padding-bottom: var(--dua-space-6); border-bottom: var(--dua-line-thin) dashed var(--dua-ink); }
-.pd-classic .pd-life:last-child { padding-bottom: 0; border-bottom: 0; }
-@media (min-width: 1024px) {
-  .pd-classic .pd-opening-title { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); grid-template-areas: "eyebrow eyebrow" "title chips" "slogan chips"; column-gap: var(--dua-space-7); align-items: end; }
-  .pd-classic .pd-opening-title .pd-eyebrow { grid-area: eyebrow; }
-  .pd-classic .pd-opening-title h1 { grid-area: title; }
-  .pd-classic .pd-opening-title .pd-slogan { grid-area: slogan; }
-  .pd-classic .pd-opening-title .pd-chips { grid-area: chips; justify-content: flex-end; align-self: end; }
-  .pd-classic .pd-life:not(.text-only) { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: var(--dua-space-7); }
-  .pd-classic .pd-life.reverse:not(.text-only) { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); }
-  .pd-classic .pd-life.reverse .pd-life-visual { order: 2; }
-}
-
-/* =====================================================================
  * Template 2 — 圖像 gallery（照片優先）
  * ===================================================================== */
 .pd-gallery { background: var(--dua-surface); }
@@ -794,3 +773,119 @@
   .project-detail *,
   .project-detail *::after { transition: none !important; animation: none !important; }
 }
+
+/* =====================================================================
+ * Template 1 — 經典 classic（第 6 批改版，參考圖 A）
+ * 滿版首圖輪播（完整比例、文字不壓圖）→ 下方資訊列（地區・銷售狀態／案名／標語／規格）→ 章節導覽
+ * → 關於（文字＋行政區圖）→ 5 大優勢（淡橘色帶、膠囊）→ 格局（淡藍色帶，左文右圖）
+ * → 周邊（圖文交錯）→ 滿版內容 → 預約賞屋（淡綠色帶，左表單右地圖）。
+ * 細線取代粗框與陰影、拿掉章節編號，改為英文小標＋大標。
+ * 捲動進場：DetailReveal（components/project-motion.tsx）替圖片與標題加 data-reveal，只動 opacity/transform。
+ * ===================================================================== */
+.pd-classic { --pd-width: 1240px; --pd-line: rgba(20, 24, 20, 0.16); --pd-section-y: var(--dua-space-6); }
+@media (min-width: 1024px) { .pd-classic { --pd-section-y: var(--dua-space-7); } }
+.pd-classic .pd-opening { display: flex; flex-direction: column; padding-bottom: 0; }
+.pd-classic .pd-opening-photo { order: -1; padding-inline: 0; }
+.pd-classic .pd-opening-title { padding: var(--dua-space-5) var(--pd-pad) var(--dua-space-6); }
+.pd-classic .pd-opening-title .pd-eyebrow,
+.pd-classic .pd-chips { display: none; }
+.pd-meta { margin: 0 0 var(--dua-space-2); color: var(--dua-ink-2); font-size: var(--dua-text-sm); font-weight: 700; letter-spacing: 0.14em; }
+.pd-classic .pd-opening-title h1 { margin: 0 0 var(--dua-space-2); line-height: 1.15; letter-spacing: 0.02em; }
+.pd-classic .pd-slogan { margin: 0 0 var(--dua-space-4); font-size: var(--dua-text-lg); }
+.pd-specs { display: flex; flex-wrap: wrap; gap: 6px 0; margin: 0; padding: 0; list-style: none; font-weight: 700; }
+.pd-specs li + li::before { content: ""; display: inline-block; width: 1px; height: 0.9em; margin: 0 14px; background: var(--dua-ink-2); vertical-align: -1px; }
+.pd-classic .pd-opening-bar a[href="#appointment"],
+.pd-classic .mobile-booking .action,
+.pd-classic .visit-booking .action { border-color: var(--dua-ink); background: var(--dua-ink); color: var(--dua-bg); box-shadow: none; }
+
+/* 首圖：滿版（cover，點圖開燈箱看完整比例），控制列在圖下方；說明已顯示在步驟列，不重複 */
+.pd-classic .detail-gallery-hero .detail-gallery-image { border: 0; border-radius: 0; background: #ECEBE6; }
+.pd-classic .detail-gallery-hero .detail-gallery-image img { width: 100%; height: clamp(320px, 62vh, 720px); max-height: none; object-fit: cover; }
+.pd-classic .detail-gallery-hero .detail-gallery-caption { display: none; }
+.pd-classic .detail-gallery-hero .detail-gallery-navigation { margin-top: var(--dua-space-2); }
+.pd-classic .pd-opening-bar { padding-top: var(--dua-space-2); }
+.pd-classic .pd-opening-title { padding-top: var(--dua-space-2); padding-bottom: var(--dua-space-5); }
+.pd-classic .detail-gallery-hero .detail-gallery-navigation,
+.pd-classic .detail-gallery-hero .detail-gallery-caption { padding-inline: var(--pd-pad); }
+
+/* 細線、無陰影的共用元件 */
+.pd-classic .detail-gallery-image { border: 0; border-radius: 4px; box-shadow: none; }
+.pd-classic .detail-gallery-arrows button,
+.pd-classic .advantages-controls button,
+.pd-classic .visit-action,
+.pd-classic .detail-room-switch button,
+.pd-classic .detail-plan-switch button { border: 1px solid var(--dua-ink); background: transparent; box-shadow: none; }
+.pd-classic .detail-room-switch button[aria-pressed="true"],
+.pd-classic .detail-plan-switch button[aria-pressed="true"],
+.pd-classic .visit-action.primary { background: var(--dua-ink); color: var(--dua-bg); }
+.pd-classic .visit-action.primary:hover { color: var(--dua-bg); }
+.pd-classic .detail-room-switch button[aria-pressed="true"]::after,
+.pd-classic .detail-plan-switch button[aria-pressed="true"]::after { display: none; }
+.pd-classic .detail-gallery-steps span { height: 2px; border: 0; background: var(--pd-line); }
+.pd-classic .detail-gallery-steps button[aria-pressed="true"] span { background: var(--dua-ink); }
+
+/* 章節導覽：文字＋底線 */
+.pd-classic .detail-navigation { border-block: 1px solid var(--pd-line); }
+.pd-classic .detail-navigation a:hover { border-color: transparent; }
+.pd-classic .detail-navigation a[aria-current="location"] { border-color: transparent; background: none; color: var(--dua-ink); box-shadow: none; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 8px; }
+
+/* 章節：英文小標＋大標，色帶區分 */
+.pd-classic .pd-number { display: none; }
+.pd-classic .pd-heading { display: block; margin-bottom: var(--dua-space-4); }
+.pd-classic .advantages-heading h2 { margin-bottom: var(--dua-space-4); }
+.pd-classic .pd-summary { gap: var(--dua-space-5); }
+.pd-classic .pd-neighborhood { gap: var(--dua-space-5); }
+.pd-classic .detail-plans { gap: var(--dua-space-4); }
+.pd-classic .pd-plan { align-items: start; }
+.pd-classic .project-content-block { padding-block: var(--dua-space-5); }
+.pd-classic .pd-kicker,
+.pd-classic .pd-eyebrow { letter-spacing: 0.24em; }
+.pd-classic .pd-heading h2,
+.pd-classic .pd-summary-copy h2,
+.pd-classic .advantages-heading h2,
+.pd-classic .pd-custom-copy h2 { font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem); letter-spacing: 0.02em; }
+.pd-classic .pd-chapter--plan { background: var(--dua-sky-soft); }
+.pd-classic .pd-chapter--location { background: var(--dua-grass-soft); }
+.pd-classic .pd-chapter--custom { border-top: 0; }
+.pd-classic .pd-facts { border-top: 1px solid var(--pd-line); }
+.pd-classic .pd-facts > div { border-bottom: 1px solid var(--pd-line); }
+.pd-classic .district-map { border: 1px solid var(--pd-line); box-shadow: none; }
+
+/* 5 大優勢：淡橘色帶、膠囊（文字可選取） */
+.pd-classic .project-advantages { border-block: 0; background: var(--dua-orange-soft); }
+.pd-classic .advantage-capsule:nth-child(n) > .advantage-card { align-items: center; justify-content: center; min-height: 120px; padding: var(--dua-space-4) var(--dua-space-5); border: 1px solid rgba(20, 24, 20, 0.22); border-radius: 64px; background: rgba(255, 255, 255, 0.6) !important; box-shadow: none; text-align: center; }
+.pd-classic .advantage-capsule h3 { font-size: var(--dua-text-base); }
+
+/* 格局：左文右圖，圖放白底 */
+.pd-classic .pd-plan-image .detail-gallery-image { background: var(--dua-surface); }
+.pd-classic .pd-plan-note { border: 1px solid var(--pd-line); box-shadow: none; }
+
+/* 周邊：圖文交錯，不加虛線 */
+.pd-classic .pd-life.text-only .pd-life-copy { border: 1px solid var(--pd-line); box-shadow: none; }
+@media (min-width: 1024px) {
+  .pd-classic .pd-life:not(.text-only) { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: var(--dua-space-6); }
+  .pd-classic .pd-summary { gap: var(--dua-space-6); }
+  .pd-classic .pd-plan { gap: var(--dua-space-6); }
+  .pd-classic .project-visit { gap: var(--dua-space-6); }
+  .pd-classic .pd-life.reverse:not(.text-only) { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); }
+  .pd-classic .pd-life.reverse .pd-life-visual { order: 2; }
+}
+
+/* 滿版內容（空拍／影片） */
+.pd-classic .content-full-image { padding-inline: 0; }
+.pd-classic .content-full-image .content-copy,
+.pd-classic .content-full-image .detail-gallery-navigation { padding-inline: var(--pd-pad); }
+.pd-classic .content-full-image .detail-gallery-bleed .detail-gallery-image { border-radius: 0; }
+.pd-classic .project-video { border: 0; box-shadow: none; }
+
+/* 預約賞屋：淡綠色帶，表單底線式 */
+.pd-classic .visit-booking form { padding: 0; border: 0; background: transparent; box-shadow: none; }
+.pd-classic .visit-booking input:not([type="checkbox"]),
+.pd-classic .visit-booking textarea { padding-inline: 2px; border: 0; border-bottom: 1px solid var(--dua-ink); border-radius: 0; background: transparent; }
+.pd-classic .location-map { border: 1px solid var(--pd-line); box-shadow: none; }
+.pd-classic .map-navigation-label { border-top: 1px solid var(--pd-line); }
+.pd-classic .pd-faq details { border: 1px solid var(--pd-line); }
+
+/* 捲動進場（一次性） */
+.pd-classic [data-reveal] { transition: opacity 700ms var(--dua-ease-out), transform 700ms var(--dua-ease-out); }
+.pd-classic [data-reveal]:not([data-revealed]) { opacity: 0; transform: translate3d(0, 32px, 0); }

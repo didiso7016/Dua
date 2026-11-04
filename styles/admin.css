@@ -324,3 +324,8 @@ body:has(.admin-root) .admin-wizard-bar .action { margin-left: auto; }
 @media (prefers-reduced-motion: reduce) {
   body:has(.admin-root) .admin-wizard-step { transition: none; }
 }
+
+/* 第 6 批：上方列只在手機顯示（開關左側選單用）；桌機帳號入口在左側選單底部（app/admin/ui.tsx SidebarFooter）。 */
+@media (min-width: 768px) {
+  body:has(.admin-root) .admin-bar { display: none; }
+}

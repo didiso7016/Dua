@@ -17,3 +17,18 @@ export function Advantages({items}:{items:{title:string;text:string}[]}){
  {count>1&&<div className="advantages-controls"><button type="button" onClick={()=>select(current-1)} aria-label="上一項優勢">←</button><span aria-live={paused?'polite':'off'}>{String(current+1).padStart(2,'0')}／{String(count).padStart(2,'0')}</span><button type="button" onClick={()=>select(current+1)} aria-label="下一項優勢">→</button></div>}
  </section>
 }
+
+// 第 6 批：經典模板的捲動進場（只動 opacity/transform，一次性；styles/project-detail.css「經典」段）。
+// 只處理圖片與章節標題；掛載時已在畫面內的元素不隱藏（不閃），減少動態效果或不支援 IntersectionObserver 時不做任何事，
+// 沒有 JS 時內容照常顯示（隱藏樣式只套用在腳本標記過的元素）。
+const revealTargets='.pd-body .detail-gallery,.pd-summary-map,.pd-custom-media,.project-video,.pd-heading,.advantages-heading';
+export function DetailReveal(){
+ useEffect(()=>{
+  const root=document.querySelector('.project-detail.pd-classic');
+  if(!root||!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const ob=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){(e.target as HTMLElement).dataset.revealed='';ob.unobserve(e.target)}},{rootMargin:'0px 0px -8% 0px',threshold:.12});
+  for(const el of root.querySelectorAll<HTMLElement>(revealTargets)){if(el.getBoundingClientRect().top<innerHeight*.92)continue;el.dataset.reveal='';ob.observe(el)}
+  return()=>ob.disconnect();
+ },[]);
+ return null;
+}

@@ -2,7 +2,7 @@ import {getProjects,getSettings,getHomeSettings} from '@/lib/storage';
 import {Header,Footer,Unavailable} from '@/components/site';
 import {HomeFinder} from '@/components/home-discovery';
 import {HomeHero} from '@/components/home-hero';
-import {HomeLatest,HomePopular,HomeAds,HomeNews} from '@/components/home-sections';
+import {HomeLatest,HomePopular,HomeAds} from '@/components/home-sections';
 import {activeBanners,latestProjects,publicProject,popularExcluding} from '@/lib/discovery';
 import {viewStats} from '@/lib/view-stats';
 export const dynamic='force-dynamic';
@@ -12,7 +12,6 @@ export default async function Home(){try{const [projects,settings,home]=await Pr
  const stats=home.popularEnabled?await viewStats(projects).catch(()=>null):null;const ranked=stats&&stats.total>=10&&stats.projects.filter(p=>p.views>0).length>=3?stats.projects.filter(p=>p.views>0).map(r=>data.find(p=>p.id===r.id)!).filter(Boolean):[];const popular=popularExcluding(ranked,latest);
  return <><Header compact/><main className="dua-home">
  <HomeHero/>
- <HomeNews banners={banners}/>
  <HomeFinder projects={data} budgets={home.budgetRanges}/>
  <HomeLatest projects={latest}/>
  <HomePopular projects={popular}/>

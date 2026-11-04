@@ -1,6 +1,16 @@
 # DUA+ 技術移轉手冊（HANDOVER）
 
-> 狀態截至：2026-11-04，第 5 批（開場只播一次、詳細頁細修、自訂章節）完成後。第 4 批為後台建案精靈；第 3 批為建案詳細頁模板；第 2 批為首頁資訊架構＋ /projects 改版；第 1 批為聯絡我們／洽詢名單／隱私權政策／關於我們併入刊登合作。
+> 狀態截至：2026-11-04，第 6 批（經典模板改版、後台側欄、移除最新消息、客戶版 Worker）完成後。第 5 批為開場只播一次、詳細頁細修、自訂章節；第 4 批為後台建案精靈；第 3 批為建案詳細頁模板；第 2 批為首頁資訊架構＋ /projects 改版；第 1 批為聯絡我們／洽詢名單／隱私權政策／關於我們併入刊登合作。
+>
+> **第 6 批變更摘要（經典模板改版、後台、首頁、客戶版站點）**
+> - **經典模板改版**（參考圖 A＋日系建商網站風格）：開場改為**滿版首圖輪播**（`object-fit: cover`，點圖開燈箱看完整比例），控制列在圖下方；下方資訊列依序為「地區・銷售狀態」（`.pd-meta`）、案名、標語、規格列「房型｜坪數｜階段・類型」（`.pd-specs`，空白欄位不顯示），經典模板不再顯示彩色貼紙。章節改為英文小標＋大標、拿掉圓形編號；細線取代粗框與陰影；色帶：5 大優勢＝淡橘（膠囊卡片）、格局＝淡藍、預約賞屋＝淡綠；章節導覽改為文字＋底線；預約表單改為底線式欄位、深色按鈕。段落間距縮小（使用者要求「空白不要太多」）。圖像／簡約兩個模板不變。
+> - **捲動進場動畫**（只有經典模板）：`components/project-motion.tsx` 的 `DetailReveal` 在載入後替「畫面外」的圖片與章節標題加 `data-reveal`，捲到時淡入上浮（只動 opacity／transform，700ms，一次性）。掛載時已在畫面內的不動（不閃）；系統開啟「減少動態效果」或沒有 JS 時不做任何事，內容照常顯示。
+> - **5 個建案全部改為經典模板**：`seed/70-classic-all.sql`（本機與正式 D1 都已執行）。
+> - **後台**：電腦版拿掉上方列，「帳號設定」移到左側選單底部（`SidebarFooter`），「查看前台」原本就在左側；手機（<768px）保留精簡上方列只用來開關選單。不是帳號管理功能，只是入口搬家。
+> - **首頁**：移除「最新消息」列（`HomeNews`，沒有地方上資料）；「最新建案」標題下的「依首次刊登時間排序，最多 6 個。」拿掉。
+> - **客戶版站點**：另開 Worker `dua-plus-client`（https://dua-plus-client.onlyworkandeducation.workers.dev），**與正式站共用同一個 D1**（後台改資料兩邊同時變，預約／洽詢進同一份名單），只有程式版面要另外部署。**只有在負責人說要推時才部署客戶版**（第 6 章）。
+> - **正式後台密碼**：2026-11-04 依負責人要求重設（帳號仍為 admin，密碼另行交接，**不要寫進 repo**）。兩個 Worker 的 `DUA_AUTH_PEPPER` 已換成同一組新值，備份在部署資料夾 `C:\DUA-deploy\.prod-pepper`（不在 repo，**不可遺失**）；重設前的帳號資料備份在 `dua-tasksemote-auth-account-before-b6.json`。之後計畫改用 Supabase 管理帳號。
+> - 測試：新增 `tests/batch6.mjs`；`tests/clean-detail.mjs` 改為「扣掉開場規格列後」房型／坪數只出現一次。
 >
 > **第 5 批變更摘要（開場動畫、首頁角色、詳細頁細修、自訂章節）**
 > - 開場動畫：**每個瀏覽階段（分頁）只播一次**（`sessionStorage` 旗標 `dua:intro-played`，邏輯在 `lib/intro.ts`）。`PageLoadingOverlay` 從 `Header` 移到 `app/layout.tsx`，換頁不會重新掛載；`<head>` 內嵌小腳本在首次繪製前替 `<html>` 加上 `dua-intro-played`，CSS 直接隱藏，重新整理／再次進站不會閃一下。點一下（或按 Esc）即可略過（200ms 淡出）。減少動態效果：靜態畫面約 1.2 秒後消失（修正：`styles/base.css` 全域 reduced-motion 規則原本會讓它一開始就消失）。run-cycle 替換點不變（`components/loading-scene.tsx`）。
@@ -136,6 +146,7 @@ pnpm dev                         # http://localhost:5173 ，後台 /admin/login
 | `seed/40-project-templates.sql` | 第 3 批：用 `json_set` 只改 5 個建案的 `template` 欄位——星峠＝經典、青田晴光／台中光＝圖像、板橋悅森居／高雄和樂＝簡約。不動其他內容；建案不存在時不新增。還原預設：`UPDATE projects SET data=json_remove(data,'$.template')` |
 | `seed/50-admin-wizard.sql` | 第 4 批：1 筆虛構**草稿**建案 `demo-wizard-draft`（「範例草稿・青田小日子（精靈示範）」，status=draft，前台不顯示、詳細頁 404）。只填第 1 步＋1 張封面照，用來示範在精靈接續第 2～6 步。固定 id、`INSERT OR REPLACE`，只動這一筆；重跑會把它還原成草稿。清除：`DELETE FROM projects WHERE id=demo-wizard-draft` |
 | `seed/60-batch5.sql` | 第 5 批：只用 `json_set` 改示範建案——光之丘 D2、悅森居 C1 的格局說明（其他戶別留空以確認版面收合）；光之丘 3 個自訂章節（基本資料之後有圖、位置之後純文字、1 個隱藏）、悅森居 1 個（格局之後有圖）。不動星峠真實內容；長名稱標籤用 00 內既有的「七期光之丘（示範）」「鳳山和樂透天（示範）」。清除：`UPDATE projects SET data=json_remove(data,'$.customSections') WHERE id IN ('demo-taichung-hikari','demo-newtaipei-yuesen')` |
+| `seed/70-classic-all.sql` | 第 6 批：用 `json_set` 把 5 個建案的 `template` 全部改成 `classic`（經典）。可安全對正式 D1 重跑。恢復第 3 批混搭示範：重跑 `40-project-templates.sql` |
 
 ```sh
 pnpm setup:local          # 先確保資料表存在
@@ -147,7 +158,7 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 - **建案保護**：本機 `projects` 表已有 `00-projects.sql` 中任何一個建案時，預設會跳過該檔，避免蓋掉本機後台的修改；加 `--reset-projects` 才會覆蓋。
 - 範例資料 id 都以 `5eed0000-` 開頭，可用 `DELETE FROM inquiries WHERE id LIKE '5eed0000-%'`（bookings 同理）清除。
 - **注意**：若本機後台已設定 Google Sheets 串接，按「補送未完成名單」會把 pending 範例寫進真的試算表。測試補送前先清掉範例或改用測試用試算表。
-- 正式 D1 已載入：`40-project-templates.sql`（第 3 批）、`60-batch5.sql`（第 5 批，2026-11-04；只改光之丘、悅森居兩個示範建案，執行前已備份這兩筆）。這兩檔只用 `json_set`，可安全對正式 D1 重跑：`wrangler d1 execute dua-plus-db --remote --file seed/60-batch5.sql`（在 `C:DUA-deploy` 執行）。
+- 正式 D1 已載入：`40-project-templates.sql`（第 3 批）、`60-batch5.sql`（第 5 批，2026-11-04；只改光之丘、悅森居兩個示範建案，執行前已備份這兩筆）、`70-classic-all.sql`（第 6 批，5 案全部經典）。這兩檔只用 `json_set`，可安全對正式 D1 重跑：`wrangler d1 execute dua-plus-db --remote --file seed/60-batch5.sql`（在 `C:DUA-deploy` 執行）。
 - 範例資料只給本機用，**不要**對正式 D1 執行 `10-`、`20-`、`30-`（`30-` 會蓋掉正式首頁設定）。`00-projects.sql` 必要時可用來還原正式建案（`--remote --file seed/00-projects.sql`，會覆蓋正式資料，請先備份）。
 - 建案照片 `/assets/demo/*.jpg`（hsr-a19、hsr-station、huayi-exterior、land-art、paperbark-trail、plan-a6）已放在 `public/assets/demo/` 並隨 repo 提交。
 - 之後每一批的新功能都要在 `seed/` 加上對應的 `NN-<功能>.sql`。
@@ -155,6 +166,7 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 ## 6. 部署到 Cloudflare Worker
 
 - 目前正式網址：https://dua-plus.onlyworkandeducation.workers.dev
+- 客戶版網址（第 6 批新增）：https://dua-plus-client.onlyworkandeducation.workers.dev ，Worker 名稱 `dua-plus-client`，與正式站共用 D1 `dua-plus-db`。**只在負責人說「推客戶版」時才部署。** 部署方式：正式站 build 完、刪掉 `r2_buckets` 後，複製 `dist/server/wrangler.json` 為 `dist/server/wrangler.client.json`，只把 `name`（與 `topLevelName`）改成 `dua-plus-client`，再執行 `pnpm exec wrangler deploy --config dist/server/wrangler.client.json`。`database_id` 不改，所以兩站讀寫同一個資料庫。客戶版的 `DUA_AUTH_PEPPER` 與正式站相同（後台帳密相同）。
 - 尚無自訂網域。
 - 部署**從複本資料夾 `C:\DUA-deploy` 進行**，不是從 `C:\DUA`。`C:\DUA-deploy` 有自己的 `wrangler.jsonc`，裡面是正式 D1 的真實 `database_id`；repo 內的 `wrangler.jsonc` 是 placeholder，不要把真實 ID 提交進 repo，也不要用 repo 的設定蓋掉 deploy 資料夾的設定。
 
@@ -179,7 +191,7 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 
 ## 7. 後台使用說明
 
-登入：`/admin/login`（本機 `admin`／`admin12345`；正式帳密另行交接）。工作階段 8 小時，HttpOnly Cookie。
+登入：`/admin/login`（本機 `admin`／`admin12345`；正式站與客戶版共用同一組帳密，另行交接，2026-11-04 重設）。「帳號設定」在左側選單底部（第 6 批）。工作階段 8 小時，HttpOnly Cookie。
 
 | 路徑 | 功能 |
 |---|---|
@@ -209,7 +221,7 @@ pnpm seed:local -- --reset-projects   # 連 00-projects.sql 也強制執行（�
 - **平台資訊**：公司名稱、電話、Email、地址、FB／IG，前台 Footer 與 `/contact` 共用。
 - **首頁與瀏覽統計**：
   - 互動找房的預算級距（首頁 Q&A 與 `/projects` 共用）。
-  - **精選與廣告版位**（第 2 批）：每筆有 標題、類型（編輯精選／廣告・贊助）、**首頁版位**（自動／橫幅 2:1／方形 1:1）、連結、顯示期間、圖片。首頁固定保留 1 個橫幅＋2 個方形，只顯示圖片（標題當替代文字），角落小貼紙標示「廣告」或「精選」；「自動」依排列順序先補橫幅再補方形，多出的不顯示；空位顯示「廣告版位招募中」連到 `/partner`。建議尺寸：橫幅 1200×600、方形 800×800。編輯精選的標題也會出現在首頁上方「最新消息」列。正式站 R2 未啟用前上傳停用，可在「圖片路徑」欄位直接填 `/assets/...` 站內靜態圖（第 2 批新增欄位；只接受 `/assets/` 或 `/api/media/` 開頭）。
+  - **精選與廣告版位**（第 2 批）：每筆有 標題、類型（編輯精選／廣告・贊助）、**首頁版位**（自動／橫幅 2:1／方形 1:1）、連結、顯示期間、圖片。首頁固定保留 1 個橫幅＋2 個方形，只顯示圖片（標題當替代文字），角落小貼紙標示「廣告」或「精選」；「自動」依排列順序先補橫幅再補方形，多出的不顯示；空位顯示「廣告版位招募中」連到 `/partner`。建議尺寸：橫幅 1200×600、方形 800×800。（第 6 批起首頁不再有「最新消息」列。）正式站 R2 未啟用前上傳停用，可在「圖片路徑」欄位直接填 `/assets/...` 站內靜態圖（第 2 批新增欄位；只接受 `/assets/` 或 `/api/media/` 開頭）。
   - 「大家都在看」開關與近 30 天瀏覽統計：開啟且至少 3 案有瀏覽、合計 10 次以上才有熱門資料；首頁會再排除已在「最新建案」出現的建案，沒有剩下就不顯示熱門區塊（目前只有 5 個建案，全部都在最新建案內，所以熱門區塊通常不會出現）。
 
 ## 8. Google Sheets 同步

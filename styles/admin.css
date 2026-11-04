@@ -329,3 +329,7 @@ body:has(.admin-root) .admin-wizard-bar .action { margin-left: auto; }
 @media (min-width: 768px) {
   body:has(.admin-root) .admin-bar { display: none; }
 }
+
+/* 第 6 批：內容較短的頁面（帳號設定）也靠上對齊，不垂直置中；帳號設定按鈕與資料之間留白。 */
+body:has(.admin-root) .admin-main { margin-top: 0; margin-bottom: auto; }
+body:has(.admin-root) .admin-account-actions { margin-top: 18px; }

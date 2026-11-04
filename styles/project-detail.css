@@ -811,3 +811,7 @@
 @media (max-width: 639px) { .pd-life-placeholder { aspect-ratio: 16 / 9; padding: var(--dua-space-4); } }
 .pd-gallery .pd-life-placeholder { border-width: 0 0 var(--dua-line-width); border-radius: 0; box-shadow: none; }
 .pd-compact .pd-life-placeholder { box-shadow: var(--dua-shadow-sm); }
+
+/* 第 6 批：基本資料標題加 01 編號（沿用 .pd-heading），與其他章節對齊。 */
+.pd-heading--summary { margin-bottom: var(--dua-space-4); }
+.pd-heading--summary h2 { margin: 0; }

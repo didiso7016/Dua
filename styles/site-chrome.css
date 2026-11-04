@@ -621,3 +621,30 @@ body:has(> .dua-footer) > .dua-footer { flex-shrink: 0; margin-top: auto; }
 @media (max-width: 639.98px) {
   .dua-footer__bottom { border-top: 0; padding-top: 0; }
 }
+
+/* ============================================================ Header CTA（第 6 批） */
+/* 頁首「聯絡我們」沿用原本右下角「洽詢」浮動按鈕的樣式（紅色膠囊＋對話框圖示＋偏移陰影），浮動按鈕已移除。 */
+.dua-header__nav > a.dua-header__cta {
+  gap: 6px;
+  min-height: 40px;
+  margin-left: var(--dua-space-2);
+  padding: 0 16px 0 12px;
+  border: var(--dua-border);
+  border-radius: var(--dua-radius-pill);
+  background: var(--dua-red);
+  color: var(--dua-on-red);
+  box-shadow: var(--dua-shadow);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  transition: transform var(--dua-dur-fast) var(--dua-ease-out);
+}
+.dua-header__nav > a.dua-header__cta::after { display: none; }
+.dua-header__nav > a.dua-header__cta:hover { color: var(--dua-on-red); transform: translate(-1px, -2px); box-shadow: var(--dua-shadow-hover); }
+.dua-header__nav > a.dua-header__cta:active { transform: translate(2px, 2px); box-shadow: none; }
+.dua-header__cta svg { display: block; flex-shrink: 0; }
+/* 手機：縮小膠囊，讓四個連結排得下 */
+@media (max-width: 580px) {
+  .dua-header__nav > a.dua-header__cta { min-height: 36px; margin-left: 4px; padding: 0 10px 0 8px; gap: 4px; box-shadow: var(--dua-shadow-sm); }
+  .dua-header__cta svg { width: 16px; height: 16px; }
+}
+.dua-header--compact .dua-header__nav > a.dua-header__cta { padding: 0 12px 0 9px; }

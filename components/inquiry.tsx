@@ -81,7 +81,7 @@ export function InquiryLauncher(){
  },[openWith]);
  if(!enabled)return null;
  return <>
-  <button type="button" className="dua-inquiry-fab" aria-haspopup="dialog" onClick={()=>openWith('')}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M4 5.5h16v10H9.5L5 19.5v-4H4z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/></svg><span>洽詢</span></button>
+  {/* 第 6 批：右下角「洽詢」浮動按鈕已移除，改由頁首「聯絡我們」膠囊按鈕開啟這個彈窗。 */}
   <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
    <DialogPrimitive.Portal>
     <DialogPrimitive.Overlay className="dua-inquiry-overlay"/>

@@ -333,3 +333,10 @@ body:has(.admin-root) .admin-wizard-bar .action { margin-left: auto; }
 /* 第 6 批：內容較短的頁面（帳號設定）也靠上對齊，不垂直置中；帳號設定按鈕與資料之間留白。 */
 body:has(.admin-root) .admin-main { margin-top: 0; margin-bottom: auto; }
 body:has(.admin-root) .admin-account-actions { margin-top: 18px; }
+
+/* 第 6 批：周邊機能區塊排序（拖曳把手＋上移／下移）。 */
+body:has(.admin-root) .sortable-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+body:has(.admin-root) .sortable-head .small-actions { margin-left: auto; }
+body:has(.admin-root) .drag-handle { display: inline-grid; place-items: center; width: 32px; height: 32px; border: 1px solid #d4dce7; border-radius: 8px; background: #fff; color: #647187; letter-spacing: -2px; cursor: grab; user-select: none; }
+body:has(.admin-root) .drag-handle:active { cursor: grabbing; }
+@media (hover: none) { body:has(.admin-root) .drag-handle { display: none; } }

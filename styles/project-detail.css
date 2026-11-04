@@ -794,3 +794,20 @@
   .project-detail *,
   .project-detail *::after { transition: none !important; animation: none !important; }
 }
+
+/* 第 6 批：格局段落收緊（標題與戶別按鈕、按鈕與內容的間距縮小；說明與圖片頂端對齊；格局圖最高 540px）。 */
+.pd-chapter--plan .pd-heading { margin-bottom: var(--dua-space-4); }
+.project-detail .detail-plans { gap: var(--dua-space-3); }
+.project-detail .pd-plan { align-items: start; }
+.project-detail .pd-plan-image .detail-gallery-image img { max-height: min(60vh, 540px); }
+@media (min-width: 1024px) { .project-detail .pd-chapter--plan { padding-block: var(--dua-space-7); } }
+
+/* 第 6 批：周邊機能沒有照片時的標題色塊（與照片同位置、同樣左右交錯）。 */
+.pd-life-placeholder { display: flex; flex-direction: column; justify-content: flex-end; gap: var(--dua-space-2); aspect-ratio: 16 / 10; max-height: 360px; padding: var(--dua-space-5); border: var(--dua-border); border-radius: var(--dua-radius-lg); background: var(--dua-sky-soft); box-shadow: var(--dua-shadow-lg); }
+.pd-life:nth-child(3n+2) .pd-life-placeholder { background: var(--dua-grass-soft); }
+.pd-life:nth-child(3n) .pd-life-placeholder { background: var(--dua-orange-soft); }
+.pd-life-placeholder .pd-kicker { margin: 0; }
+.pd-life-placeholder strong { font-family: var(--dua-font-display); font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.75rem); font-weight: 400; line-height: 1.2; overflow-wrap: anywhere; }
+@media (max-width: 639px) { .pd-life-placeholder { aspect-ratio: 16 / 9; padding: var(--dua-space-4); } }
+.pd-gallery .pd-life-placeholder { border-width: 0 0 var(--dua-line-width); border-radius: 0; box-shadow: none; }
+.pd-compact .pd-life-placeholder { box-shadow: var(--dua-shadow-sm); }
